@@ -44,7 +44,6 @@ namespace Crate {
       case SDLK_d:
         m_controls.right = event.type == SDL_KEYDOWN;
         break;
-
 	case SDLK_f:
         m_controls.flying = event.type == SDL_KEYDOWN;
 		//m_player.fly();

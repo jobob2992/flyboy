@@ -33,11 +33,13 @@ namespace Crate {
     void set_on_ground(const bool &is_on_ground_);
     void jump();
 
+
 	void fly();
 	void fall();
     void step(const float &time_step);
 	void fuel_up();
 	float get_gas(){return gas;};
+
   private:
     void create_body();
 
