@@ -135,7 +135,7 @@ namespace Crate {
 
     vr.set_3d(m_player.get_camera());
 	//render 3 crates
-    m_crate.render();
+	m_crate.render();
 	crate2.render();
 	crate3.render();
 
@@ -148,6 +148,19 @@ namespace Crate {
 	Quadrilateral<Vertex3f_Texture> quad(p0,p1,p2,p3);
 	quad.fax_Material(&floor);
 	vr.render(quad);
+
+	vr.set_2d();
+	Zeni::Font &ft = get_Fonts()["title"];
+	const Point3f &position = m_player.get_camera().position;
+	float xwid = ft.get_text_width(itoa(position.x));
+	float ywid = ft.get_text_width(itoa(position.y));
+	float zwid = ft.get_text_width(itoa(position.z));
+	float spacewid = ft.get_text_width(",");
+	ft.render_text(itoa(position.x), Point2f(0.0f, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+	ft.render_text(",", Point2f(0.0f + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+	ft.render_text(itoa(position.y), Point2f(0.0f + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+	ft.render_text(",", Point2f(0.0f + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+	ft.render_text(itoa(position.z), Point2f(0.0f + spacewid + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
   }
 
   void Crate_State::partial_step(const float &time_step, const Vector3f &velocity) {

@@ -49,7 +49,7 @@ namespace Crate {
 
   void Player::jump() {
     if(m_is_on_ground) {
-      m_velocity.k += 60.0f;
+      m_velocity.k += 150.0f;
       m_is_on_ground = false;
     }
   }
@@ -64,10 +64,12 @@ namespace Crate {
 		  m_velocity.k = 0.0f;
 	  }
   }
+
   void Player::step(const float &time_step) {
     m_camera.position += time_step * m_velocity;
     create_body();
   }
+
 
   void Player::fuel_up()
   {
