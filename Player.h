@@ -33,12 +33,15 @@ namespace Crate {
     void set_on_ground(const bool &is_on_ground_);
     void jump();
 
-
+	//METHODS TO FLY AND REFUEL
 	void fly();
 	void fall();
-    void step(const float &time_step);
+	bool can_fly();
 	void fuel_up();
-	float get_gas(){return gas;};
+    float get_time();
+
+    void step(const float &time_step);
+
 
   private:
     void create_body();
@@ -54,9 +57,12 @@ namespace Crate {
     Zeni::Collision::Capsule m_body; // collision
     Zeni::Vector3f m_velocity;
     bool m_is_on_ground;
-	float gas;
     // Level 4
     // Controls are external to Player
+
+	//Timer for jetpack fuel and recharge
+	Zeni::Chronometer<Zeni::Time> jetpack_timer;
+    float fuel;
   };
 
 }

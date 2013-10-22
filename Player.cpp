@@ -14,7 +14,7 @@ namespace Crate {
      m_end_point_b(end_point_b_),
      m_radius(radius_),
      m_is_on_ground(false),
-	 gas(100.0f)
+     fuel(100.0f)
   {
     m_camera.fov_rad = Zeni::Global::pi / 3.0f;
 
@@ -53,28 +53,49 @@ namespace Crate {
       m_is_on_ground = false;
     }
   }
-  void Player::fly() {
-		//gas -= 0.7f;
-		m_velocity.k += 5.0f;
-  }
 
-  void Player::fall() {
-	  //while(m_velocity.k >= 0)
-	  {
-		  m_velocity.k = 0.0f;
-	  }
-  }
+  //jetpack implementation
+    void Player::fly()
+    {        fuel -= 0.5f;
+        m_velocity.k += 5.0f;
+    }
+
+    void Player::fall() 
+    {
+      //  while(m_velocity.k > 0.0f)
+      //  {
+        //    m_velocity.k -= 0.2f;
+       // }
+    }
+
+    bool Player::can_fly()
+    {
+        if(fuel > 0.0f) return true;
+        else return false;
+    }
+ 
+    void Player::fuel_up()
+    {
+        while(fuel < 100.0f)
+        {
+            fuel += 0.1f;
+        }
+    }
+
+    float Player::get_time()
+    {
+        return fuel;
+    }
 
   void Player::step(const float &time_step) {
     m_camera.position += time_step * m_velocity;
     create_body();
   }
+  
 
 
-  void Player::fuel_up()
-  {
-	  gas = 100.0f;
-  }
+
+
   void Player::create_body() {
     Sound &sr = get_Sound();
 
