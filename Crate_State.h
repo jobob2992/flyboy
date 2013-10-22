@@ -3,6 +3,7 @@
 
 #include "Crate.h"
 #include "Player.h"
+#include "port_disc.h"
 #include <Zeni/Gamestate.h>
 #include <Zeni/Timer.h>
 
@@ -25,6 +26,7 @@ namespace Crate {
 
     void on_key(const SDL_KeyboardEvent &event);
     void on_mouse_motion(const SDL_MouseMotionEvent &event);
+	void on_mouse_click(const SDL_MouseButtonEvent &event);
 
     void perform_logic();
 
@@ -37,8 +39,10 @@ namespace Crate {
 
     Crate m_crate;
     Player m_player;
+	port_disc m_disc;
 
     bool m_moved;
+	bool m_shot;
   };
 
 }

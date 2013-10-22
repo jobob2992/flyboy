@@ -71,16 +71,13 @@ namespace game_object {
       m_source->play();
   }
 
-  void game_object::move(const float &time) {
-	  m_position.x += time * m_velocity.i;
-	  m_position.y += time * m_velocity.j;
-	  m_position.z += time * m_velocity.k;
+  void game_object::step(const float &time_step) {
+	  m_position += time_step * m_velocity;
+	  create_body();
   }
 
   void game_object::accelerate(const Vector3f &diff) {
-	  m_velocity.i += diff.i;
-	  m_velocity.j += diff.j;
-	  m_velocity.k += diff.k;
+	  m_velocity += diff;
   }
   
   void game_object::set_on_ground(const bool &is_on_ground) {
@@ -90,9 +87,7 @@ namespace game_object {
   }
 
   void game_object::set_position(const Zeni::Point3f &position) {
-	  m_position.x = position.x;
-	  m_position.y = position.y;
-	  m_position.z = position.z;
+	  m_position = position;
   }
 
   void game_object::create_body() {

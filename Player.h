@@ -33,6 +33,8 @@ namespace Crate {
     void set_on_ground(const bool &is_on_ground_);
     void jump();
 
+	std::pair <Zeni::Point3f, Zeni::Quaternion> shoot();
+
     void step(const float &time_step);
 
   private:

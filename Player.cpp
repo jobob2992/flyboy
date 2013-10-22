@@ -53,6 +53,10 @@ namespace Crate {
     }
   }
 
+  std::pair <Zeni::Point3f, Zeni::Quaternion> Player::shoot(){
+	  return std::make_pair (Zeni::Point3f(m_camera.position), Zeni::Quaternion(m_camera.orientation));
+  }
+
   void Player::step(const float &time_step) {
     m_camera.position += time_step * m_velocity;
     create_body();
