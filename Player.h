@@ -39,6 +39,7 @@ namespace Crate {
 	bool can_fly();
 	void fuel_up();
     float get_time();
+    bool resting();
 
     void step(const float &time_step);
 
@@ -61,8 +62,12 @@ namespace Crate {
     // Controls are external to Player
 
 	//Timer for jetpack fuel and recharge
-	Zeni::Chronometer<Zeni::Time> jetpack_timer;
+	Zeni::Chronometer<Zeni::Time> rest_timer;
+    Zeni::Chronometer<Zeni::Time> fly_timer;
+    Zeni::Chronometer<Zeni::Time> no_move;
     float fuel;
+    float rest_time;
+    float in_air_time;
   };
 
 }
