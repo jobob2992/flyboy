@@ -11,12 +11,13 @@ namespace Crate {
 
   class Crate_State : public Zeni::Gamestate_Base {
     struct Controls {
-      Controls() : forward(false), left(false), back(false), right(false) {}
+      Controls() : forward(false), left(false), back(false), right(false) , flying (false){}
 
       bool forward;
       bool left;
       bool back;
       bool right;
+	  bool flying;
     } m_controls;
 
   public:
@@ -37,9 +38,10 @@ namespace Crate {
 
     Zeni::Time_HQ time_passed;
 
-    Crate m_crate;
+    Crate m_crate, crate2, crate3;
     Player m_player;
-	port_disc m_disc;
+	port_disc* m_disc;
+	bool disc;
 
     bool m_moved;
 	bool m_shot;

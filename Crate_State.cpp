@@ -1,5 +1,5 @@
 #include <zenilib.h>
-
+#include <sstream>
 #include "Crate_State.h"
 
 using namespace Zeni;
@@ -8,8 +8,12 @@ using namespace Zeni::Collision;
 namespace Crate {
 
   Crate_State::Crate_State()
-    : m_crate(Point3f(12.0f, 12.0f, 0.0f),
+    : m_crate(Point3f(120.0f, 120.0f, 100.0f),
               Vector3f(30.0f, 30.0f, 30.0f)),
+		crate2(Point3f(-60.0f, 50.0f, 0.0f),
+              Vector3f(30.0f, 30.0f, 60.0f)),
+	  crate3(Point3f(0.0f, 100.0f, 60.0f),
+              Vector3f(30.0f, 60.0f, 30.0f)),
     m_player(Camera(Point3f(0.0f, 0.0f, 50.0f),
              Quaternion(),
              1.0f, 10000.0f),
@@ -41,6 +45,10 @@ namespace Crate {
 
       case SDLK_d:
         m_controls.right = event.type == SDL_KEYDOWN;
+        break;
+	case SDLK_f:
+        m_controls.flying = event.type == SDL_KEYDOWN;
+		//m_player.fly();
         break;
 
       case SDLK_SPACE:
@@ -118,14 +126,39 @@ namespace Crate {
         m_player.set_on_ground(true);
       }
     }
+	//fly if holding f
+	if(m_controls.flying)
+	{
+		m_player.fly();
+	}
+	else if(!m_moved)
+	{
+		m_player.fall();
+	}
+	if(m_player.is_on_ground())
+	{
+		m_player.fuel_up();
+	}
   }
 
   void Crate_State::render() {
     Video &vr = get_Video();
 
     vr.set_3d(m_player.get_camera());
+	//render 3 crates
+	m_crate.render();
+	crate2.render();
+	crate3.render();
 
-    m_crate.render();
+	//render the floor
+	Material floor("rock");
+	Vertex3f_Texture p0(Point3f(5000.0f, 5000.0f, -1.0f),Point2f(0.0f,0.0f));
+	Vertex3f_Texture p1(Point3f(-5000.0f, 5000.0f, -1.0f),Point2f(0.0f,1.0f));
+	Vertex3f_Texture p2(Point3f(-5000.0f, -5000.0f, -1.0f),Point2f(1.0f,1.0f));
+	Vertex3f_Texture p3(Point3f(5000.0f, -5000.0f, -1.0f),Point2f(1.0f,0.0f));
+	Quadrilateral<Vertex3f_Texture> quad(p0,p1,p2,p3);
+	quad.fax_Material(&floor);
+	vr.render(quad);
 
 	vr.set_2d();
 	Zeni::Font &ft = get_Fonts()["title"];
@@ -155,7 +188,32 @@ namespace Crate {
         m_crate.collide();
         m_moved = false;
       }
+      m_player.set_position(backup_position);
 
+      /** Bookkeeping for jumping controls **/
+      if(velocity.k < 0.0f)
+        m_player.set_on_ground(true);
+    }
+	if(crate2.get_body().intersects(m_player.get_body())) {
+      if(m_moved)
+      {
+        /** Play a sound if possible **/
+        crate2.collide();
+        m_moved = false;
+      }
+      m_player.set_position(backup_position);
+
+      /** Bookkeeping for jumping controls **/
+      if(velocity.k < 0.0f)
+        m_player.set_on_ground(true);
+    }
+	if(crate3.get_body().intersects(m_player.get_body())) {
+      if(m_moved)
+      {
+        /** Play a sound if possible **/
+        crate3.collide();
+        m_moved = false;
+      }
       m_player.set_position(backup_position);
 
       /** Bookkeeping for jumping controls **/
