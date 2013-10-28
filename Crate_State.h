@@ -1,10 +1,12 @@
 #ifndef CRATE_STATE_H
 #define CRATE_STATE_H
 
+#include "game_object.h"
 #include "Crate.h"
 #include "Player.h"
 #include <Zeni/Gamestate.h>
 #include <Zeni/Timer.h>
+
 
 namespace Crate {
 
@@ -36,10 +38,10 @@ namespace Crate {
 
     Zeni::Time_HQ time_passed;
 
-    Crate m_crate, crate2, crate3;
+    Crate m_crate, crate2, crate3, crate4, crate5;
     Player m_player;
-
     bool m_moved;
+    //game_object gold;
   };
 
 }

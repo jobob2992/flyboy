@@ -6,22 +6,24 @@
 #include <Zeni/Quaternion.h>
 #include <Zeni/Sound.h>
 #include <Zeni/Vector3f.h>
-
-namespace game_object {
+#include <string>
 
   class game_object {
   public:
-    game_object::game_object(const Zeni::Point3f &position = Zeni::Point3f(0.0f, 0.0f, 0.0f),
+    game_object::game_object(
+          const Zeni::String &sfx,
+          const Zeni::String &modl,
+          const Zeni::Point3f &position = Zeni::Point3f(0.0f, 0.0f, 0.0f),
           const Zeni::Vector3f &scale = Zeni::Vector3f(1.0f, 1.0f, 1.0f),
           const Zeni::Quaternion &rotation = Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), 0.0f),
 		  const Zeni::Vector3f &velocity = Zeni::Vector3f(0.0f, 0.0f, 0.0f));
-    game_object(const game_object &rhs);
+    game_object::game_object(const game_object &rhs);
     game_object & operator=(const game_object &rhs);
     ~game_object();
 
     void render();
 
-    void collide();
+/*    void collide();
 
 	void move(const float &time);
 
@@ -32,9 +34,13 @@ namespace game_object {
 	void set_position(const Zeni::Point3f &position);
 
     const Zeni::Collision::Parallelepiped & get_body() const {return m_body;}
-
+*/
   private:
     void create_body();
+
+    //input for sfx and model
+    Zeni::String sound;
+    Zeni::String shape;
 
     // Level 1
     static Zeni::Model * m_model;
@@ -55,7 +61,4 @@ namespace game_object {
     // Level 4
     // A stationary game_object has no controls
   };
-
-}
-
 #endif

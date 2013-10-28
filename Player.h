@@ -40,6 +40,8 @@ namespace Crate {
 	void fuel_up();
     float get_time();
     bool resting();
+    float before;
+    float after;
 
     void step(const float &time_step);
 

@@ -11,7 +11,10 @@ namespace Crate {
 
   class Crate {
   public:
-    Crate(const Zeni::Point3f &corner_ = Zeni::Point3f(0.0f, 0.0f, 0.0f),
+    Crate(
+          const Zeni::String &sfx,
+          const Zeni::String &modl,
+        const Zeni::Point3f &corner_ = Zeni::Point3f(0.0f, 0.0f, 0.0f),
           const Zeni::Vector3f &scale_ = Zeni::Vector3f(1.0f, 1.0f, 1.0f),
           const Zeni::Quaternion &rotation_ = Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), 0.0f));
     Crate(const Crate &rhs);
@@ -21,6 +24,9 @@ namespace Crate {
     void render();
 
     void collide();
+
+    //make a crate disappear
+    void disappear();
 
     const Zeni::Collision::Parallelepiped & get_body() const {return m_body;}
 

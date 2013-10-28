@@ -8,17 +8,23 @@ using namespace Zeni::Collision;
 namespace Crate {
 
   Crate_State::Crate_State()
-    : m_crate(Point3f(120.0f, 120.0f, 100.0f),
+    : m_crate("collide", "models/island.3ds",Point3f(-300, 100.0f, 450.0f),
               Vector3f(30.0f, 30.0f, 30.0f)),
-		crate2(Point3f(-60.0f, 50.0f, 0.0f),
-              Vector3f(30.0f, 30.0f, 60.0f)),
-	  crate3(Point3f(0.0f, 100.0f, 60.0f),
-              Vector3f(30.0f, 60.0f, 30.0f)),
-    m_player(Camera(Point3f(0.0f, 0.0f, 50.0f),
+		crate2("collide", "models/ring.3ds",Point3f(50.0f, 100.0f, 400.0f),
+              Vector3f(30.0f, 30.0f, 30.0f)),
+	  crate3("collide", "models/gold.3ds",Point3f(100.0f, 100.0f, 250.0f),
+              Vector3f(30.0f, 30.0f, 30.0f)),
+	  crate4("collide", "models/gold.3ds",Point3f(150.0f, 100.0f, 150.0f),
+              Vector3f(40.0f, 40.0f, 40.0f)),
+	  crate5("coin", "models/gold.3ds",Point3f(200.0f,100.0f, 50.0f),
+              Vector3f(15.0f, 15.0f, 15.0f)),
+    m_player(Camera(Point3f(0.0f, 0.0f, 80.0f),
              Quaternion(),
              1.0f, 10000.0f),
              Vector3f(0.0f, 0.0f, -39.0f),
              11.0f)
+//    gold("collide", "models/gold.3ds", Point3f(200.0f,200.0f,300.0f),
+//              Vector3f(30.0f, 30.0f, 30.0f))
   {
     set_pausable(true);
   }
@@ -78,8 +84,8 @@ namespace Crate {
     const Vector3f left = m_player.get_camera().get_left().get_ij().normalized();
 
     /** Get velocity vector split into a number of axes **/
-    const Vector3f velocity = (m_controls.forward - m_controls.back) * 50.0f * forward
-                            + (m_controls.left - m_controls.right) * 50.0f * left;
+    const Vector3f velocity = (m_controls.forward - m_controls.back) * 80.0f * forward
+                            + (m_controls.left - m_controls.right) * 80.0f * left;
     const Vector3f x_vel = velocity.get_i();
     const Vector3f y_vel = velocity.get_j();
     Vector3f z_vel = m_player.get_velocity().get_k();
@@ -130,7 +136,7 @@ namespace Crate {
 	}
     
     //player is charging on ground or other places
-	if(m_player.is_on_ground() || m_player.resting())
+    if(m_player.is_on_ground() || m_player.resting())
 	{
 		m_player.fuel_up();
 	}
@@ -144,6 +150,9 @@ namespace Crate {
 	m_crate.render();
 	crate2.render();
 	crate3.render();
+	crate4.render();
+	crate5.render();
+//    gold.render();
 
 	//render the floor
 	Material floor("rock");
@@ -183,6 +192,8 @@ namespace Crate {
         /** Play a sound if possible **/
         m_crate.collide();
         m_moved = false;
+        //m_crate.~Crate();
+        //m_crate.disappear();
       }
       m_player.set_position(backup_position);
 
@@ -208,6 +219,32 @@ namespace Crate {
       {
         /** Play a sound if possible **/
         crate3.collide();
+        m_moved = false;
+      }
+      m_player.set_position(backup_position);
+
+      /** Bookkeeping for jumping controls **/
+      if(velocity.k < 0.0f)
+        m_player.set_on_ground(true);
+    }
+	if(crate4.get_body().intersects(m_player.get_body())) {
+      if(m_moved)
+      {
+        /** Play a sound if possible **/
+        crate4.collide();
+        m_moved = false;
+      }
+      m_player.set_position(backup_position);
+
+      /** Bookkeeping for jumping controls **/
+      if(velocity.k < 0.0f)
+        m_player.set_on_ground(true);
+    }
+	if(crate5.get_body().intersects(m_player.get_body())) {
+      if(m_moved)
+      {
+        /** Play a sound if possible **/
+        crate5.collide();
         m_moved = false;
       }
       m_player.set_position(backup_position);

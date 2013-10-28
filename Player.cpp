@@ -83,6 +83,7 @@ namespace Crate {
             fly_timer.set(0);
             fly_timer.stop();
         }
+        //no_move.stop();
     }
 
     bool Player::can_fly()
@@ -116,12 +117,13 @@ namespace Crate {
 
     bool Player::resting()
     {
+        bool result = false;
         if(!no_move.is_running())
         {
             no_move.set(0);
             no_move.start();
         }
-        return no_move.seconds() > 3.0f;
+        return no_move.seconds() > 5.0f;
     }
   void Player::step(const float &time_step) {
     m_camera.position += time_step * m_velocity;

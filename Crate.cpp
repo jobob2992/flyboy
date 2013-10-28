@@ -7,23 +7,26 @@ using namespace Zeni::Collision;
 
 namespace Crate {
 
-  Crate::Crate(const Point3f &corner_,
+  Crate::Crate(
+          const Zeni::String &sfx,
+          const Zeni::String &modl,
+      const Point3f &corner_,
         const Vector3f &scale_,
         const Quaternion &rotation_)
-    : m_source(new Sound_Source(get_Sounds()["collide"])),
+    : m_source(new Sound_Source(get_Sounds()[sfx])),
     m_corner(corner_),
     m_scale(scale_),
     m_rotation(rotation_)
   {
-    if(!m_instance_count)
-      m_model = new Model("models/crate.3ds");
-    ++m_instance_count;
+    //if(!m_instance_count)
+      m_model = new Model(modl);
+  //  ++m_instance_count;
 
     create_body();
   }
 
   Crate::Crate(const Crate &rhs)
-    : m_source(new Sound_Source(get_Sounds()["collide"])),
+    : m_source(new Sound_Source(get_Sounds()["coin"])),
     m_corner(rhs.m_corner),
     m_scale(rhs.m_scale),
     m_rotation(rhs.m_rotation)
@@ -65,6 +68,11 @@ namespace Crate {
   void Crate::collide() {
     if(!m_source->is_playing())
       m_source->play();
+  }
+
+  void Crate::disappear()
+  {
+      m_corner.z = -300.0f;
   }
 
   void Crate::create_body() {
