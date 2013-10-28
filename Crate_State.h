@@ -1,12 +1,14 @@
 #ifndef CRATE_STATE_H
 #define CRATE_STATE_H
 
+#include "game_object.h"
 #include "Crate.h"
 #include "Player.h"
 #include "game_object.h"
 #include "port_disc.h"
 #include <Zeni/Gamestate.h>
 #include <Zeni/Timer.h>
+
 
 namespace Crate {
 
@@ -28,7 +30,7 @@ namespace Crate {
 
     void on_key(const SDL_KeyboardEvent &event);
     void on_mouse_motion(const SDL_MouseMotionEvent &event);
-	void on_mouse_click(const SDL_MouseButtonEvent &event);
+	void on_mouse_button(const SDL_MouseButtonEvent &event);
 
     void perform_logic();
 
@@ -39,14 +41,17 @@ namespace Crate {
 
     Zeni::Time_HQ time_passed;
 
-    Crate m_crate, crate2, crate3;
+    Crate m_crate, crate2, crate3, crate4, crate5;
     Player m_player;
 	port_disc::port_disc* m_disc;
 	bool disc;
 
     bool m_moved;
 	bool m_shot;
+	bool unshot;
 	bool port;
+	bool unport;
+    //game_object gold;
   };
 
 }

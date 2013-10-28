@@ -10,10 +10,11 @@
 
 namespace port_disc{
 
-	class port_disc : public game_object::game_object {
+	class port_disc {
 	public:
 		port_disc(std::pair <const Zeni::Point3f, const Zeni::Vector3f> in);
 		void update(std::pair <const Zeni::Point3f, const Zeni::Vector3f> in);
+		Zeni::Point3f location();
 
 	private:
 		void create_body();

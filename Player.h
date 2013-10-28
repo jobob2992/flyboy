@@ -32,6 +32,7 @@ namespace Crate {
 
     void set_on_ground(const bool &is_on_ground_);
     void jump();
+	void port(const Zeni::Point3f &location_);
 
 	std::pair <Zeni::Point3f, Zeni::Vector3f> shoot();
 	//METHODS TO FLY AND REFUEL
@@ -40,6 +41,9 @@ namespace Crate {
 	bool can_fly();
 	void fuel_up();
     float get_time();
+    bool resting();
+    float before;
+    float after;
 
     void step(const float &time_step);
 
@@ -62,8 +66,12 @@ namespace Crate {
     // Controls are external to Player
 
 	//Timer for jetpack fuel and recharge
-	Zeni::Chronometer<Zeni::Time> jetpack_timer;
+	Zeni::Chronometer<Zeni::Time> rest_timer;
+    Zeni::Chronometer<Zeni::Time> fly_timer;
+    Zeni::Chronometer<Zeni::Time> no_move;
     float fuel;
+    float rest_time;
+    float in_air_time;
   };
 
 }

@@ -8,17 +8,26 @@ using namespace Zeni::Collision;
 namespace Crate {
 
   Crate_State::Crate_State()
-    : m_crate(Point3f(120.0f, 120.0f, 100.0f),
+    : m_crate("collide", "models/island.3ds",Point3f(-300, 100.0f, 450.0f),
               Vector3f(30.0f, 30.0f, 30.0f)),
-		crate2(Point3f(-60.0f, 50.0f, 0.0f),
-              Vector3f(30.0f, 30.0f, 60.0f)),
-	  crate3(Point3f(0.0f, 100.0f, 60.0f),
-              Vector3f(30.0f, 60.0f, 30.0f)),
-    m_player(Camera(Point3f(0.0f, 0.0f, 50.0f),
+		crate2("collide", "models/ring.3ds",Point3f(50.0f, 100.0f, 400.0f),
+              Vector3f(30.0f, 30.0f, 30.0f)),
+	  crate3("collide", "models/gold.3ds",Point3f(100.0f, 100.0f, 250.0f),
+              Vector3f(30.0f, 30.0f, 30.0f)),
+	  crate4("collide", "models/gold.3ds",Point3f(150.0f, 100.0f, 150.0f),
+              Vector3f(40.0f, 40.0f, 40.0f)),
+	  crate5("coin", "models/gold.3ds",Point3f(200.0f,100.0f, 50.0f),
+              Vector3f(15.0f, 15.0f, 15.0f)),
+    m_player(Camera(Point3f(0.0f, 0.0f, 80.0f),
              Quaternion(),
              1.0f, 10000.0f),
              Vector3f(0.0f, 0.0f, -39.0f),
-             11.0f)
+             11.0f),
+	m_shot(false),
+	port(false),
+	disc(false)
+//    gold("collide", "models/gold.3ds", Point3f(200.0f,200.0f,300.0f),
+//              Vector3f(30.0f, 30.0f, 30.0f))
   {
     set_pausable(true);
   }
@@ -44,16 +53,17 @@ namespace Crate {
       case SDLK_d:
         m_controls.right = event.type == SDL_KEYDOWN;
         break;
-	case SDLK_f:
+
+		//NOW JETPACK REPLACE JUMP
+	  case SDLK_SPACE:
         m_controls.flying = event.type == SDL_KEYDOWN;
-		//m_player.fly();
         break;
 
-      case SDLK_SPACE:
+      /*case SDLK_SPACE:
         if(event.type == SDL_KEYDOWN) {
           m_player.jump();
           m_moved = true;
-        }
+        }*/
         break;
 
       default:
@@ -67,8 +77,25 @@ namespace Crate {
     m_player.turn_left_xy(-event.xrel / 500.0f);
   }
 
-  void Crate_State::on_mouse_click(const SDL_MouseButtonEvent &event) {
-	  if(event.button == 1 && event.state == SDL_PRESSED && !m_shot) { //left click
+  void Crate_State::on_mouse_button(const SDL_MouseButtonEvent &event) {
+	  switch (event.button)
+	  {
+	  case 1:
+		  if (event.type == SDL_MOUSEBUTTONDOWN)
+			  m_shot = true;
+		  else
+			  m_shot = false;
+		  break;
+	  case 3:
+		  if (event.type == SDL_MOUSEBUTTONDOWN)
+			  port = true;
+		  else
+			  port = false;
+		  break;
+	  default:
+		  break;
+	  }
+	  /*if(event.button == 1 && event.type == SDL_MOUSEBUTTONDOWN && !m_shot) { //left click
 		  if (disc){
 			  m_disc->update(m_player.shoot());
 		  }
@@ -77,13 +104,18 @@ namespace Crate {
 		  }
 		  m_shot = true;
 	  }
-	  else if(event.button == 1 && event.state == SDL_RELEASED && m_shot) { //left unclick
+	  else if(event.button == 1 && event.state == SDL_MOUSEBUTTONUP && m_shot) { //left unclick
 		  m_shot = false;
 	  }
-	  else if(event.button == 3 && event.state == SDL_PRESSED && !port) {
-		  m_player.port(m_disc.location());
+	  else if(event.button == 3 && event.state == SDL_MOUSEBUTTONDOWN && disc && !port) { //right click
+		  m_player.port(m_disc->location());
+		  delete m_disc;
+		  m_disc = NULL;
+		  port = true;
 	  }
-	  else if 
+	  else if (event.button == 3 && event.state == SDL_MOUSEBUTTONUP && port){ //right unclick
+		  port = false;
+	  }*/
   }
 
   void Crate_State::perform_logic() {
@@ -96,8 +128,8 @@ namespace Crate {
     const Vector3f left = m_player.get_camera().get_left().get_ij().normalized();
 
     /** Get velocity vector split into a number of axes **/
-    const Vector3f velocity = (m_controls.forward - m_controls.back) * 50.0f * forward
-                            + (m_controls.left - m_controls.right) * 50.0f * left;
+    const Vector3f velocity = (m_controls.forward - m_controls.back) * 80.0f * forward
+                            + (m_controls.left - m_controls.right) * 80.0f * left;
     const Vector3f x_vel = velocity.get_i();
     const Vector3f y_vel = velocity.get_j();
     Vector3f z_vel = m_player.get_velocity().get_k();
@@ -105,6 +137,30 @@ namespace Crate {
     /** Bookkeeping for sound effects **/
     if(velocity.magnitude() != 0.0f)
       m_moved = true;
+
+	//Shooting
+	if (m_shot){
+		m_shot = false;
+		if (disc){
+			m_disc->update(m_player.shoot());
+		}
+		else {
+			play_sound("coin");
+			m_disc = new port_disc::port_disc(m_player.shoot());
+			disc = true;
+		}
+	}
+
+	//Teleporting
+	if (port){
+		port = false;
+		if (disc){
+			m_player.port(m_disc->location());
+			delete m_disc;
+			m_disc = NULL;
+			disc = false;
+		}
+	}
 
     /** Keep delays under control (if the program hangs for some time, we don't want to lose responsiveness) **/
     if(processing_time > 0.1f)
@@ -132,17 +188,23 @@ namespace Crate {
         m_player.set_position(Point3f(position.x, position.y, 50.0f));
         m_player.set_on_ground(true);
       }
+      else
+      {
+        m_player.set_on_ground(false);
+      }
     }
 	//fly if holding f
-	if(m_controls.flying)
+	if(m_controls.flying && m_player.can_fly())
 	{
 		m_player.fly();
 	}
-	else if(!m_moved)
+	else
 	{
 		m_player.fall();
 	}
-	if(m_player.is_on_ground())
+    
+    //player is charging on ground or other places
+    if(m_player.is_on_ground() || m_player.resting())
 	{
 		m_player.fuel_up();
 	}
@@ -156,6 +218,9 @@ namespace Crate {
 	m_crate.render();
 	crate2.render();
 	crate3.render();
+	crate4.render();
+	crate5.render();
+//    gold.render();
 
 	/*if (disc){
 		m_disc.render();
@@ -176,13 +241,14 @@ namespace Crate {
 	const Point3f &position = m_player.get_camera().position;
 	float xwid = ft.get_text_width(itoa(position.x));
 	float ywid = ft.get_text_width(itoa(position.y));
-	float zwid = ft.get_text_width(itoa(position.z));
+	//float zwid = ft.get_text_width(itoa(position.z));
+	float zwid =ft.get_text_width(itoa(m_player.get_time()));
 	float spacewid = ft.get_text_width(",");
 	ft.render_text(itoa(position.x), Point2f(0.0f, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
 	ft.render_text(",", Point2f(0.0f + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
 	ft.render_text(itoa(position.y), Point2f(0.0f + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
 	ft.render_text(",", Point2f(0.0f + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
-	ft.render_text(itoa(position.z), Point2f(0.0f + spacewid + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+	ft.render_text(itoa(m_player.get_time()), Point2f(0.0f + spacewid + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
   }
 
   void Crate_State::partial_step(const float &time_step, const Vector3f &velocity) {
@@ -198,6 +264,8 @@ namespace Crate {
         /** Play a sound if possible **/
         m_crate.collide();
         m_moved = false;
+        //m_crate.~Crate();
+        //m_crate.disappear();
       }
       m_player.set_position(backup_position);
 
@@ -223,6 +291,32 @@ namespace Crate {
       {
         /** Play a sound if possible **/
         crate3.collide();
+        m_moved = false;
+      }
+      m_player.set_position(backup_position);
+
+      /** Bookkeeping for jumping controls **/
+      if(velocity.k < 0.0f)
+        m_player.set_on_ground(true);
+    }
+	if(crate4.get_body().intersects(m_player.get_body())) {
+      if(m_moved)
+      {
+        /** Play a sound if possible **/
+        crate4.collide();
+        m_moved = false;
+      }
+      m_player.set_position(backup_position);
+
+      /** Bookkeeping for jumping controls **/
+      if(velocity.k < 0.0f)
+        m_player.set_on_ground(true);
+    }
+	if(crate5.get_body().intersects(m_player.get_body())) {
+      if(m_moved)
+      {
+        /** Play a sound if possible **/
+        crate5.collide();
         m_moved = false;
       }
       m_player.set_position(backup_position);
