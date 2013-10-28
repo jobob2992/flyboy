@@ -154,7 +154,6 @@ namespace Crate {
 			m_disc->update(m_player.shoot());
 		}
 		else {
-			play_sound("coin");
 			m_disc = new port_disc::port_disc(m_player.shoot());
 			disc = true;
 		}
@@ -170,6 +169,8 @@ namespace Crate {
 			disc = false;
 		}
 	}
+
+	
 
     /** Keep delays under control (if the program hangs for some time, we don't want to lose responsiveness) **/
     if(processing_time > 0.1f)
@@ -206,6 +207,7 @@ namespace Crate {
         m_player.set_on_ground(false);
       }
     }
+	
 	//fly if holding space
 	if(m_controls.flying && m_player.can_fly())
 	{
@@ -221,7 +223,6 @@ namespace Crate {
 	{
 		m_player.fuel_up();
 	}
-
 
 
   }
