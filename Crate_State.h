@@ -48,10 +48,12 @@ namespace Crate {
 
     bool m_moved;
 	bool m_shot;
-	bool unshot;
 	bool port;
-	bool unport;
     //game_object gold;
+    game_object gold, gold2,gold3, gold4;
+
+    //keep track of gold count
+    int gold_count;
   };
 
 }

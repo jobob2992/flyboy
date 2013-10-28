@@ -15,15 +15,21 @@ namespace port_disc{
 		port_disc(std::pair <const Zeni::Point3f, const Zeni::Vector3f> in);
 		void update(std::pair <const Zeni::Point3f, const Zeni::Vector3f> in);
 		Zeni::Point3f location();
+		void step(const float &time_step);
+		const Zeni::Collision::Infinite_Cylinder & get_body() const {return m_body;}
+		void accelerate(Zeni::Vector3f vec);
+		void render();
 
 	private:
 		void create_body();
+		Zeni::Model *m_model;
 		Zeni::Vector3f m_end_point_a;
 		Zeni::Vector3f m_end_point_b;
 		float m_radius;
 		Zeni::Collision::Infinite_Cylinder m_body;
 		Zeni::Point3f m_position;
 		Zeni::Vector3f m_velocity;
+		Zeni::Quaternion m_rotation;
 	};
 }
 #endif

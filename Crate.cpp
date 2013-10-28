@@ -1,5 +1,5 @@
 #include <zenilib.h>
-
+#include <iostream>
 #include "Crate.h"
 
 using namespace Zeni;
@@ -16,11 +16,12 @@ namespace Crate {
     : m_source(new Sound_Source(get_Sounds()[sfx])),
     m_corner(corner_),
     m_scale(scale_),
-    m_rotation(rotation_)
+    m_rotation(rotation_),
+    model_name(modl)
   {
     //if(!m_instance_count)
       m_model = new Model(modl);
-  //  ++m_instance_count;
+   // ++m_instance_count;
 
     create_body();
   }
@@ -51,7 +52,7 @@ namespace Crate {
 
     if(!--m_instance_count) {
       delete m_model;
-      m_model = 0lu;
+     m_model = 0lu;
     }
   }
 

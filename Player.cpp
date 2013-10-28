@@ -81,7 +81,8 @@ namespace Crate {
 
 	void Player::port(const Zeni::Point3f &location_)
 	{
-		m_camera.position = location_;
+		m_camera.position = location_ + Zeni::Vector3f(0.0f, 0.0f, 50.0f);
+		create_body();
 	}
 
     void Player::fall() 

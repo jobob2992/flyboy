@@ -8,15 +8,15 @@ using namespace Zeni::Collision;
 namespace Crate {
 
   Crate_State::Crate_State()
-    : m_crate("collide", "models/island.3ds",Point3f(-300, 100.0f, 450.0f),
+    : m_crate("collide", "models/island.3ds",Point3f(70, -10.0f, 350.0f),
               Vector3f(30.0f, 30.0f, 30.0f)),
-		crate2("collide", "models/ring.3ds",Point3f(50.0f, 100.0f, 400.0f),
+		crate2("collide", "models/ring.3ds",Point3f(50.0f, -80.0f, 250.0f),
               Vector3f(30.0f, 30.0f, 30.0f)),
-	  crate3("collide", "models/gold.3ds",Point3f(100.0f, 100.0f, 250.0f),
+	  crate3("collide", "models/gold.3ds",Point3f(250.0f, -150.0f, 200.0f),
               Vector3f(30.0f, 30.0f, 30.0f)),
-	  crate4("collide", "models/gold.3ds",Point3f(150.0f, 100.0f, 150.0f),
+	  crate4("collide", "models/gold.3ds",Point3f(200.0f, 100.0f, 150.0f),
               Vector3f(40.0f, 40.0f, 40.0f)),
-	  crate5("coin", "models/gold.3ds",Point3f(200.0f,100.0f, 50.0f),
+	  crate5("collide", "models/island.3ds",Point3f(20.0f,100.0f, 50.0f),
               Vector3f(15.0f, 15.0f, 15.0f)),
     m_player(Camera(Point3f(0.0f, 0.0f, 80.0f),
              Quaternion(),
@@ -25,11 +25,20 @@ namespace Crate {
              11.0f),
 	m_shot(false),
 	port(false),
-	disc(false)
+	disc(false),
 //    gold("collide", "models/gold.3ds", Point3f(200.0f,200.0f,300.0f),
 //              Vector3f(30.0f, 30.0f, 30.0f))
+    gold("models/gold.3ds", Point3f(100.0f,100.0f,200.0f),
+             Vector3f(2.0f, 2.0f, 2.0f)),
+    gold2("models/gold.3ds", Point3f(225.0f,-25.0f,250.0f),
+             Vector3f(2.0f, 2.0f, 2.0f)),
+    gold3("models/gold.3ds", Point3f(150.0f,-115.0f,350.0f),
+             Vector3f(2.0f, 2.0f, 2.0f)),
+    gold4("models/gold.3ds", Point3f(60.0f,-40.0f,400.0f),
+             Vector3f(2.0f, 2.0f, 2.0f))
   {
     set_pausable(true);
+    gold_count = 0;
   }
 
   void Crate_State::on_push() {
@@ -176,11 +185,15 @@ namespace Crate {
 
       /** Gravity has its effect **/
       z_vel -= Vector3f(0.0f, 0.0f, 210.0f * time_step);
+	  if (disc)
+		m_disc->accelerate(Zeni::Vector3f(0.0f, 0.0f, -210.0f) * time_step);
 
       /** Try to move on each axis **/
       partial_step(time_step, x_vel);
       partial_step(time_step, y_vel);
       partial_step(time_step, z_vel);
+	  if (disc)
+		m_disc->step(time_step);
 
       /** Keep player above ground; Bookkeeping for jumping controls **/
       const Point3f &position = m_player.get_camera().position;
@@ -193,7 +206,7 @@ namespace Crate {
         m_player.set_on_ground(false);
       }
     }
-	//fly if holding f
+	//fly if holding space
 	if(m_controls.flying && m_player.can_fly())
 	{
 		m_player.fly();
@@ -208,6 +221,9 @@ namespace Crate {
 	{
 		m_player.fuel_up();
 	}
+
+
+
   }
 
   void Crate_State::render() {
@@ -222,10 +238,14 @@ namespace Crate {
 	crate5.render();
 //    gold.render();
 
-	/*if (disc){
-		m_disc.render();
-	}*/
+	if (disc){
+		m_disc->render();
+	}
 
+    gold.render();
+    gold2.render();
+    gold3.render();
+    gold4.render();
 	//render the floor
 	Material floor("rock");
 	Vertex3f_Texture p0(Point3f(5000.0f, 5000.0f, -1.0f),Point2f(0.0f,0.0f));
@@ -238,17 +258,19 @@ namespace Crate {
 
 	vr.set_2d();
 	Zeni::Font &ft = get_Fonts()["title"];
-	const Point3f &position = m_player.get_camera().position;
-	float xwid = ft.get_text_width(itoa(position.x));
-	float ywid = ft.get_text_width(itoa(position.y));
-	//float zwid = ft.get_text_width(itoa(position.z));
-	float zwid =ft.get_text_width(itoa(m_player.get_time()));
+	const Point3f &velocity = m_player.get_velocity();
+	float xwid = ft.get_text_width(itoa(velocity.x));
+	float ywid = ft.get_text_width(itoa(velocity.y));
+	float zwid = ft.get_text_width(itoa(velocity.z));
 	float spacewid = ft.get_text_width(",");
-	ft.render_text(itoa(position.x), Point2f(0.0f, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+	ft.render_text(itoa(velocity.x), Point2f(0.0f, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
 	ft.render_text(",", Point2f(0.0f + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
-	ft.render_text(itoa(position.y), Point2f(0.0f + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+    ft.render_text(itoa(velocity.y), Point2f(0.0f + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
 	ft.render_text(",", Point2f(0.0f + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
-	ft.render_text(itoa(m_player.get_time()), Point2f(0.0f + spacewid + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+	ft.render_text(itoa(velocity.z), Point2f(0.0f + spacewid + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+    //render the fuel left
+     render_image("fuel_bar",Point2f(25.0f,70.0f),
+         Point2f(25+m_player.get_time(),92),false);
   }
 
   void Crate_State::partial_step(const float &time_step, const Vector3f &velocity) {
@@ -324,6 +346,46 @@ namespace Crate {
       /** Bookkeeping for jumping controls **/
       if(velocity.k < 0.0f)
         m_player.set_on_ground(true);
+    }
+    if(gold.get_body().intersects(m_player.get_body())) {
+      if(m_moved)
+      {
+        /** Play a sound if possible **/
+          play_sound("coin");
+        m_moved = false;
+        gold.disappear();
+        gold_count++;
+      }
+    }
+    if(gold2.get_body().intersects(m_player.get_body())) {
+      if(m_moved)
+      {
+        /** Play a sound if possible **/
+          play_sound("coin");
+        m_moved = false;
+        gold2.disappear();
+        gold_count++;
+      }
+    }
+    if(gold3.get_body().intersects(m_player.get_body())) {
+      if(m_moved)
+      {
+        /** Play a sound if possible **/
+          play_sound("coin");
+        m_moved = false;
+        gold3.disappear();
+        gold_count++;
+      }
+    }
+    if(gold4.get_body().intersects(m_player.get_body())) {
+      if(m_moved)
+      {
+        /** Play a sound if possible **/
+          play_sound("coin");
+        m_moved = false;
+        gold4.disappear();
+        gold_count++;
+      }
     }
   }
 
