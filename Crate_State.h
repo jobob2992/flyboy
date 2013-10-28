@@ -3,6 +3,7 @@
 
 #include "Crate.h"
 #include "Player.h"
+#include "game_object.h"
 #include "port_disc.h"
 #include <Zeni/Gamestate.h>
 #include <Zeni/Timer.h>
@@ -40,11 +41,12 @@ namespace Crate {
 
     Crate m_crate, crate2, crate3;
     Player m_player;
-	port_disc* m_disc;
+	port_disc::port_disc* m_disc;
 	bool disc;
 
     bool m_moved;
 	bool m_shot;
+	bool port;
   };
 
 }

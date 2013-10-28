@@ -46,7 +46,7 @@ private:
 class Bootstrap {
   class Gamestate_One_Initializer : public Gamestate_Zero_Initializer {
     virtual Gamestate_Base * operator()() {
-      Window::set_title("zenilib Crate Example");
+      Window::set_title("Flyboy");
 
       get_Controllers();
       get_Video();
@@ -54,7 +54,7 @@ class Bootstrap {
       get_Fonts();
       get_Sounds();
 
-      return new Title_State<Crate::Crate_State, Instructions_State>("zenilib Example:\nCrate");
+      return new Title_State<Crate::Crate_State, Instructions_State>("Flyboy\nHenry Shih and Joe Stevens");
     }
   } m_goi;
 

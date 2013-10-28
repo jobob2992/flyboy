@@ -18,9 +18,7 @@ namespace Crate {
              Quaternion(),
              1.0f, 10000.0f),
              Vector3f(0.0f, 0.0f, -39.0f),
-             11.0f),
-	m_disc(Point3f(0.0f, 0.0f, 2.0f),
-			Vector3f(0.0f, 0.0f, 0.0f))
+             11.0f)
   {
     set_pausable(true);
   }
@@ -70,13 +68,22 @@ namespace Crate {
   }
 
   void Crate_State::on_mouse_click(const SDL_MouseButtonEvent &event) {
-	  if(event.button == 1 && event.state == SDL_PRESSED && !m_shot) {
-		  m_player.shoot();
+	  if(event.button == 1 && event.state == SDL_PRESSED && !m_shot) { //left click
+		  if (disc){
+			  m_disc->update(m_player.shoot());
+		  }
+		  else{
+			  m_disc = new port_disc::port_disc(m_player.shoot());
+		  }
 		  m_shot = true;
 	  }
-	  if(event.state == SDL_RELEASED && m_shot) {
+	  else if(event.button == 1 && event.state == SDL_RELEASED && m_shot) { //left unclick
 		  m_shot = false;
 	  }
+	  else if(event.button == 3 && event.state == SDL_PRESSED && !port) {
+		  m_player.port(m_disc.location());
+	  }
+	  else if 
   }
 
   void Crate_State::perform_logic() {
@@ -149,6 +156,10 @@ namespace Crate {
 	m_crate.render();
 	crate2.render();
 	crate3.render();
+
+	/*if (disc){
+		m_disc.render();
+	}*/
 
 	//render the floor
 	Material floor("rock");

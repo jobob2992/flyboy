@@ -8,21 +8,21 @@
 #include <Zeni/Vector3f.h>
 #include "game_object.h"
 
-class port_disc : public game_object {
-public:
-    port_disc(const Zeni::Point3f &position,
-		  const Zeni::Vector3f &velocity)
-	;
+namespace port_disc{
 
+	class port_disc : public game_object::game_object {
+	public:
+		port_disc(std::pair <const Zeni::Point3f, const Zeni::Vector3f> in);
+		void update(std::pair <const Zeni::Point3f, const Zeni::Vector3f> in);
 
-private:
-	create_body();
-    Zeni::Vector3f m_end_point_a;
-    Zeni::Vector3f m_end_point_b;
-	float m_radius;
-	Zeni::Collision::Infinite_Cylinder m_body;
-	Zeni::Point3f m_position;
-	Zeni::Vector3f m_velocity;
+	private:
+		void create_body();
+		Zeni::Vector3f m_end_point_a;
+		Zeni::Vector3f m_end_point_b;
+		float m_radius;
+		Zeni::Collision::Infinite_Cylinder m_body;
+		Zeni::Point3f m_position;
+		Zeni::Vector3f m_velocity;
+	};
 }
-
 #endif
