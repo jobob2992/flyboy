@@ -14,7 +14,7 @@ namespace Crate {
      m_end_point_b(end_point_b_),
      m_radius(radius_),
      m_is_on_ground(false),
-     fuel(0.0f)
+     fuel(200.0f)
   {
     m_camera.fov_rad = Zeni::Global::pi / 3.0f;
 
@@ -55,7 +55,7 @@ namespace Crate {
   }
 
   std::pair <Zeni::Point3f, Zeni::Vector3f> Player::shoot(){
-	  return std::make_pair (Zeni::Point3f(m_camera.position), 300.0f*(Zeni::Vector3f(m_camera.get_forward())).normalized());
+	  return std::make_pair (Zeni::Point3f(m_camera.position), 350.0f*(Zeni::Vector3f(m_camera.get_forward())).normalized());
   }
   //jetpack implementation
     void Player::fly()
@@ -114,7 +114,7 @@ namespace Crate {
             rest_time = rest_timer.seconds();
             if(fuel < 200)
             {
-                fuel += rest_time * 0.5f;
+                fuel += rest_time * 2.0f;
             }
         }
     }
@@ -132,7 +132,7 @@ namespace Crate {
             no_move.set(0);
             no_move.start();
         }
-        return no_move.seconds() > 5.0f;
+        return no_move.seconds() > 0.5f;
     }
   void Player::step(const float &time_step) {
     m_camera.position += time_step * m_velocity;
