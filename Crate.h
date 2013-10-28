@@ -29,7 +29,7 @@ namespace Crate {
     void disappear();
 
     const Zeni::Collision::Parallelepiped & get_body() const {return m_body;}
-
+    Zeni::String model_name;
   private:
     void create_body();
 

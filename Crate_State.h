@@ -41,7 +41,10 @@ namespace Crate {
     Crate m_crate, crate2, crate3, crate4, crate5;
     Player m_player;
     bool m_moved;
-    //game_object gold;
+    game_object gold, gold2,gold3, gold4;
+
+    //keep track of gold count
+    int gold_count;
   };
 
 }

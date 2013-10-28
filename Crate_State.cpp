@@ -8,25 +8,32 @@ using namespace Zeni::Collision;
 namespace Crate {
 
   Crate_State::Crate_State()
-    : m_crate("collide", "models/island.3ds",Point3f(-300, 100.0f, 450.0f),
+    : m_crate("collide", "models/island.3ds",Point3f(70, -10.0f, 350.0f),
               Vector3f(30.0f, 30.0f, 30.0f)),
-		crate2("collide", "models/ring.3ds",Point3f(50.0f, 100.0f, 400.0f),
+		crate2("collide", "models/ring.3ds",Point3f(50.0f, -80.0f, 250.0f),
               Vector3f(30.0f, 30.0f, 30.0f)),
-	  crate3("collide", "models/gold.3ds",Point3f(100.0f, 100.0f, 250.0f),
+	  crate3("collide", "models/gold.3ds",Point3f(250.0f, -150.0f, 200.0f),
               Vector3f(30.0f, 30.0f, 30.0f)),
-	  crate4("collide", "models/gold.3ds",Point3f(150.0f, 100.0f, 150.0f),
+	  crate4("collide", "models/gold.3ds",Point3f(200.0f, 100.0f, 150.0f),
               Vector3f(40.0f, 40.0f, 40.0f)),
-	  crate5("coin", "models/gold.3ds",Point3f(200.0f,100.0f, 50.0f),
+	  crate5("collide", "models/island.3ds",Point3f(20.0f,100.0f, 50.0f),
               Vector3f(15.0f, 15.0f, 15.0f)),
     m_player(Camera(Point3f(0.0f, 0.0f, 80.0f),
              Quaternion(),
              1.0f, 10000.0f),
              Vector3f(0.0f, 0.0f, -39.0f),
-             11.0f)
-//    gold("collide", "models/gold.3ds", Point3f(200.0f,200.0f,300.0f),
-//              Vector3f(30.0f, 30.0f, 30.0f))
+             11.0f),
+    gold("models/gold.3ds", Point3f(100.0f,100.0f,200.0f),
+             Vector3f(2.0f, 2.0f, 2.0f)),
+    gold2("models/gold.3ds", Point3f(225.0f,-25.0f,250.0f),
+             Vector3f(2.0f, 2.0f, 2.0f)),
+    gold3("models/gold.3ds", Point3f(150.0f,-115.0f,350.0f),
+             Vector3f(2.0f, 2.0f, 2.0f)),
+    gold4("models/gold.3ds", Point3f(60.0f,-40.0f,400.0f),
+             Vector3f(2.0f, 2.0f, 2.0f))
   {
     set_pausable(true);
+    gold_count = 0;
   }
 
   void Crate_State::on_push() {
@@ -140,6 +147,9 @@ namespace Crate {
 	{
 		m_player.fuel_up();
 	}
+
+
+
   }
 
   void Crate_State::render() {
@@ -152,8 +162,10 @@ namespace Crate {
 	crate3.render();
 	crate4.render();
 	crate5.render();
-//    gold.render();
-
+    gold.render();
+    gold2.render();
+    gold3.render();
+    gold4.render();
 	//render the floor
 	Material floor("rock");
 	Vertex3f_Texture p0(Point3f(5000.0f, 5000.0f, -1.0f),Point2f(0.0f,0.0f));
@@ -172,11 +184,14 @@ namespace Crate {
 	//float zwid = ft.get_text_width(itoa(position.z));
 	float zwid =ft.get_text_width(itoa(m_player.get_time()));
 	float spacewid = ft.get_text_width(",");
-	ft.render_text(itoa(position.x), Point2f(0.0f, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
-	ft.render_text(",", Point2f(0.0f + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
-	ft.render_text(itoa(position.y), Point2f(0.0f + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
-	ft.render_text(",", Point2f(0.0f + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
-	ft.render_text(itoa(m_player.get_time()), Point2f(0.0f + spacewid + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+	ft.render_text(itoa(gold_count), Point2f(0.0f, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+	//ft.render_text(",", Point2f(0.0f + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+    //ft.render_text(itoa(gold_count), Point2f(0.0f + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+	//ft.render_text(",", Point2f(0.0f + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+	//ft.render_text(itoa(m_player.get_time()), Point2f(0.0f + spacewid + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+    //render the fuel left
+     render_image("fuel_bar",Point2f(25.0f,70.0f),
+         Point2f(25+m_player.get_time(),92),false);
   }
 
   void Crate_State::partial_step(const float &time_step, const Vector3f &velocity) {
@@ -252,6 +267,46 @@ namespace Crate {
       /** Bookkeeping for jumping controls **/
       if(velocity.k < 0.0f)
         m_player.set_on_ground(true);
+    }
+    if(gold.get_body().intersects(m_player.get_body())) {
+      if(m_moved)
+      {
+        /** Play a sound if possible **/
+          play_sound("coin");
+        m_moved = false;
+        gold.disappear();
+        gold_count++;
+      }
+    }
+    if(gold2.get_body().intersects(m_player.get_body())) {
+      if(m_moved)
+      {
+        /** Play a sound if possible **/
+          play_sound("coin");
+        m_moved = false;
+        gold2.disappear();
+        gold_count++;
+      }
+    }
+    if(gold3.get_body().intersects(m_player.get_body())) {
+      if(m_moved)
+      {
+        /** Play a sound if possible **/
+          play_sound("coin");
+        m_moved = false;
+        gold3.disappear();
+        gold_count++;
+      }
+    }
+    if(gold4.get_body().intersects(m_player.get_body())) {
+      if(m_moved)
+      {
+        /** Play a sound if possible **/
+          play_sound("coin");
+        m_moved = false;
+        gold4.disappear();
+        gold_count++;
+      }
     }
   }
 
