@@ -37,6 +37,15 @@ namespace Crate {
     gold4("models/gold.3ds", Point3f(60.0f,-40.0f,400.0f),
              Vector3f(2.0f, 2.0f, 2.0f))
   {
+      gold_set.insert(&gold);
+      gold_set.insert(&gold2);
+      gold_set.insert(&gold3);
+      gold_set.insert(&gold4);
+      crate_set.insert(&m_crate);
+      crate_set.insert(&crate2);
+      crate_set.insert(&crate3);
+      crate_set.insert(&crate4);
+      crate_set.insert(&crate5);
     set_pausable(true);
     gold_count = 0;
   }
@@ -226,26 +235,40 @@ namespace Crate {
 
   }
 
+  //render the set
+    void Crate_State::render_set(std::set<game_object*> &input)  
+    {
+        std::set<game_object*>::iterator it;
+        for(it = input.begin();it!= input.end();++it)
+        {
+            (*it)->render();
+        }
+    }
+
+  //render the Crate set
+    void Crate_State::render_crate_set(std::set<Crate*> &input)  
+    {
+        std::set<Crate*>::iterator it;
+        for(it = input.begin();it!= input.end();++it)
+        {
+            (*it)->render();
+        }
+    }
+
   void Crate_State::render() {
     Video &vr = get_Video();
 
     vr.set_3d(m_player.get_camera());
 	//render 3 crates
-	m_crate.render();
-	crate2.render();
-	crate3.render();
-	crate4.render();
-	crate5.render();
-//    gold.render();
+    render_crate_set(crate_set);
 
 	if (disc){
 		m_disc->render();
 	}
 
-    gold.render();
-    gold2.render();
-    gold3.render();
-    gold4.render();
+    //render the st of gold
+    render_set(gold_set);
+
 	//render the floor
 	Material floor("rock");
 	Vertex3f_Texture p0(Point3f(5000.0f, 5000.0f, -1.0f),Point2f(0.0f,0.0f));
@@ -280,112 +303,39 @@ namespace Crate {
     m_player.step(time_step);
 
     /** If collision with the crate has occurred, roll things back **/
-    if(m_crate.get_body().intersects(m_player.get_body())) {
-      if(m_moved)
-      {
-        /** Play a sound if possible **/
-        m_crate.collide();
-        m_moved = false;
-        //m_crate.~Crate();
-        //m_crate.disappear();
-      }
-      m_player.set_position(backup_position);
+    for(std::set<Crate*>::iterator it = crate_set.begin(); it!=crate_set.end();++it)
+    {
+          if((*it)->get_body().intersects(m_player.get_body())) 
+          {
+              if(m_moved)
+              {
+                /** Play a sound if possible **/
+                (*it)->collide();
+                m_moved = false;
+                //m_crate.~Crate();
+                //m_crate.disappear();
+              }
+              m_player.set_position(backup_position);
 
-      /** Bookkeeping for jumping controls **/
-      if(velocity.k < 0.0f)
-        m_player.set_on_ground(true);
+              /** Bookkeeping for jumping controls **/
+              if(velocity.k < 0.0f)
+                m_player.set_on_ground(true);
+          }
     }
-	if(crate2.get_body().intersects(m_player.get_body())) {
-      if(m_moved)
-      {
-        /** Play a sound if possible **/
-        crate2.collide();
-        m_moved = false;
-      }
-      m_player.set_position(backup_position);
 
-      /** Bookkeeping for jumping controls **/
-      if(velocity.k < 0.0f)
-        m_player.set_on_ground(true);
-    }
-	if(crate3.get_body().intersects(m_player.get_body())) {
-      if(m_moved)
+    for(std::set<game_object*>::iterator it = gold_set.begin(); it!=gold_set.end();++it)
+    {
+      if((*it)->get_body().intersects(m_player.get_body())) 
       {
-        /** Play a sound if possible **/
-        crate3.collide();
-        m_moved = false;
-      }
-      m_player.set_position(backup_position);
-
-      /** Bookkeeping for jumping controls **/
-      if(velocity.k < 0.0f)
-        m_player.set_on_ground(true);
-    }
-	if(crate4.get_body().intersects(m_player.get_body())) {
-      if(m_moved)
-      {
-        /** Play a sound if possible **/
-        crate4.collide();
-        m_moved = false;
-      }
-      m_player.set_position(backup_position);
-
-      /** Bookkeeping for jumping controls **/
-      if(velocity.k < 0.0f)
-        m_player.set_on_ground(true);
-    }
-	if(crate5.get_body().intersects(m_player.get_body())) {
-      if(m_moved)
-      {
-        /** Play a sound if possible **/
-        crate5.collide();
-        m_moved = false;
-      }
-      m_player.set_position(backup_position);
-
-      /** Bookkeeping for jumping controls **/
-      if(velocity.k < 0.0f)
-        m_player.set_on_ground(true);
-    }
-    if(gold.get_body().intersects(m_player.get_body())) {
-      if(m_moved)
-      {
-        /** Play a sound if possible **/
-          play_sound("coin");
-        m_moved = false;
-        gold.disappear();
-        gold_count++;
-      }
-    }
-    if(gold2.get_body().intersects(m_player.get_body())) {
-      if(m_moved)
-      {
-        /** Play a sound if possible **/
-          play_sound("coin");
-        m_moved = false;
-        gold2.disappear();
-        gold_count++;
-      }
-    }
-    if(gold3.get_body().intersects(m_player.get_body())) {
-      if(m_moved)
-      {
-        /** Play a sound if possible **/
-          play_sound("coin");
-        m_moved = false;
-        gold3.disappear();
-        gold_count++;
-      }
-    }
-    if(gold4.get_body().intersects(m_player.get_body())) {
-      if(m_moved)
-      {
-        /** Play a sound if possible **/
-          play_sound("coin");
-        m_moved = false;
-        gold4.disappear();
-        gold_count++;
-      }
+          if(m_moved)
+          {
+            /** Play a sound if possible **/
+                play_sound("coin");
+                m_moved = false;
+                (*it)->disappear();
+                gold_count++;
+          }
+        }
     }
   }
 

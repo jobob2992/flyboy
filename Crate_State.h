@@ -8,6 +8,7 @@
 #include "port_disc.h"
 #include <Zeni/Gamestate.h>
 #include <Zeni/Timer.h>
+#include <set>
 
 
 namespace Crate {
@@ -34,8 +35,15 @@ namespace Crate {
 
     void perform_logic();
 
+    //render all the object in the set
+    void render_set(std::set<game_object*> &input);
+
+    //render all the crates in the set
+    void render_crate_set(std::set<Crate*> &input);
+
     void render();
 
+    
   private:
     void partial_step(const float &time_step, const Zeni::Vector3f &velocity);
 
@@ -51,7 +59,8 @@ namespace Crate {
 	bool port;
     //game_object gold;
     game_object gold, gold2,gold3, gold4;
-
+    std::set<game_object*> gold_set;
+    std::set<Crate*> crate_set;
     //keep track of gold count
     int gold_count;
   };
