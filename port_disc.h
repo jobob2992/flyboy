@@ -19,17 +19,20 @@ namespace port_disc{
 		const Zeni::Collision::Infinite_Cylinder & get_body() const {return m_body;}
 		void accelerate(Zeni::Vector3f vec);
 		void render();
+		void stop();
+		bool is_stopped(){return stopped;};
 
 	private:
 		void create_body();
 		Zeni::Model *m_model;
-		Zeni::Vector3f m_end_point_a;
-		Zeni::Vector3f m_end_point_b;
+		Zeni::Point3f m_end_point_a;
+		Zeni::Point3f m_end_point_b;
 		float m_radius;
 		Zeni::Collision::Infinite_Cylinder m_body;
 		Zeni::Point3f m_position;
 		Zeni::Vector3f m_velocity;
 		Zeni::Quaternion m_rotation;
+		bool stopped;
 	};
 }
 #endif

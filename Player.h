@@ -24,7 +24,7 @@ namespace Crate {
     void turn_left_xy(const float &theta);
 
     // Level 3
-    const Zeni::Collision::Capsule & get_body() const {return m_body;}
+	const Zeni::Collision::Capsule & get_body() const {return m_body;}
     bool is_on_ground() const {return m_is_on_ground;}
 
     const Zeni::Vector3f & get_velocity() const {return m_velocity;}
@@ -62,7 +62,7 @@ namespace Crate {
     float m_radius;
 
     // Level 3
-    Zeni::Collision::Capsule m_body; // collision
+	Zeni::Collision::Capsule m_body; // collision
     Zeni::Vector3f m_velocity;
     bool m_is_on_ground;
     // Level 4
