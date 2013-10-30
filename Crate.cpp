@@ -10,11 +10,11 @@ namespace Crate {
   Crate::Crate(
           const Zeni::String &sfx,
           const Zeni::String &modl,
-      const Point3f &corner_,
+      const Point3f &top_center,
         const Vector3f &scale_,
         const Quaternion &rotation_)
     : m_source(new Sound_Source(get_Sounds()[sfx])),
-    m_corner(corner_),
+    m_top_center(top_center),
     m_scale(scale_),
     m_rotation(rotation_),
     model_name(modl)
@@ -28,7 +28,7 @@ namespace Crate {
 
   Crate::Crate(const Crate &rhs)
     : m_source(new Sound_Source(get_Sounds()["coin"])),
-    m_corner(rhs.m_corner),
+	m_top_center(rhs.m_top_center),
     m_scale(rhs.m_scale),
     m_rotation(rhs.m_rotation)
   {
@@ -38,7 +38,7 @@ namespace Crate {
   }
 
   Crate & Crate::operator=(const Crate &rhs) {
-    m_corner = rhs.m_corner;
+	m_top_center = rhs.m_top_center;
     m_scale = rhs.m_scale;
     m_rotation = rhs.m_rotation;
 
@@ -59,7 +59,13 @@ namespace Crate {
   void Crate::render() {
     const std::pair<Vector3f, float> rotation = m_rotation.get_rotation();
 
-    m_model->set_translate(m_corner);
+	m_model->set_translate(m_body.get_end_point_a());
+    m_model->set_scale(m_scale);
+    m_model->set_rotate(rotation.second, rotation.first);
+
+    m_model->render();
+
+	m_model->set_translate(m_top_center);
     m_model->set_scale(m_scale);
     m_model->set_rotate(rotation.second, rotation.first);
 
@@ -73,16 +79,15 @@ namespace Crate {
 
   void Crate::disappear()
   {
-      m_corner.z = -300.0f;
+      m_top_center.z = -300.0f;
   }
 
   void Crate::create_body() {
-    m_body = Parallelepiped(m_corner,
-                            m_rotation * m_scale.get_i(),
-                            m_rotation * m_scale.get_j(),
-                            m_rotation * m_scale.get_k());
+	  m_body = Infinite_Cylinder(m_top_center,
+								m_top_center - Zeni::Vector3f(0.0f, 0.0f, -1.055 * m_scale.z),
+								0.977f * m_scale.z);
 
-    m_source->set_position(m_corner + m_rotation * m_scale / 2.0f);
+	  m_source->set_position(m_top_center - Zeni::Vector3f(0.0f, 0.0f, -0.5275 * m_scale.z));
   }
 
   Model * Crate::m_model = 0;

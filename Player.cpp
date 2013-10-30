@@ -146,7 +146,7 @@ namespace Crate {
   void Player::create_body() {
     Sound &sr = get_Sound();
 
-    m_body = Capsule(m_camera.position,
+	m_body = Capsule(m_camera.position,
                      m_camera.position + m_end_point_b,
                      m_radius);
 

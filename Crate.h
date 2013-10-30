@@ -14,7 +14,7 @@ namespace Crate {
     Crate(
           const Zeni::String &sfx,
           const Zeni::String &modl,
-          const Zeni::Point3f &corner_ = Zeni::Point3f(0.0f, 0.0f, 0.0f),
+          const Zeni::Point3f &top_center = Zeni::Point3f(0.0f, 0.0f, 0.0f),
           const Zeni::Vector3f &scale_ = Zeni::Vector3f(1.0f, 1.0f, 1.0f),
           const Zeni::Quaternion &rotation_ = Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), 0.0f));
     Crate(const Crate &rhs);
@@ -28,7 +28,7 @@ namespace Crate {
     //make a crate disappear
     void disappear();
 
-    const Zeni::Collision::Parallelepiped & get_body() const {return m_body;}
+	const Zeni::Collision::Infinite_Cylinder & get_body() const {return m_body;}
     Zeni::String model_name;
   private:
     void create_body();
@@ -40,12 +40,12 @@ namespace Crate {
     Zeni::Sound_Source * m_source;
 
     // Level 2
-    Zeni::Point3f m_corner;
+    Zeni::Point3f m_top_center;
     Zeni::Vector3f m_scale;
     Zeni::Quaternion m_rotation;
 
     // Level 3
-    Zeni::Collision::Parallelepiped m_body; // not motion so much as collision
+	Zeni::Collision::Infinite_Cylinder m_body; // not motion so much as collision
 
     // Level 4
     // A stationary Crate has no controls
