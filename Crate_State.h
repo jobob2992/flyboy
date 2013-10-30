@@ -5,6 +5,7 @@
 #include "Crate.h"
 #include "Player.h"
 #include "game_object.h"
+#include "enemy.h"
 #include "port_disc.h"
 #include <Zeni/Gamestate.h>
 #include <Zeni/Timer.h>
@@ -35,7 +36,10 @@ namespace Crate {
 
     void perform_logic();
 
-    //render all the object in the set
+    //render all the enemies in the set
+    void render_set(std::set<enemy*> &input);
+
+    //render all the game objects in the set
     void render_set(std::set<game_object*> &input);
 
     //render all the crates in the set
@@ -57,12 +61,17 @@ namespace Crate {
     bool m_moved;
 	bool m_shot;
 	bool port;
+    bool bounced;
     //game_object gold;
     game_object gold, gold2,gold3, gold4;
+    enemy e1,e2,e3;
     std::set<game_object*> gold_set;
     std::set<Crate*> crate_set;
+    std::set<enemy*> enemy_set;
+    Zeni::Chronometer<Zeni::Time> bounce_timer;
     //keep track of gold count
     int gold_count;
+    Zeni::Vector3f new_v;
   };
 
 }

@@ -17,7 +17,7 @@ namespace Crate {
 	  crate4("collide", "models/gold.3ds",Point3f(200.0f, 100.0f, 150.0f),
               Vector3f(40.0f, 40.0f, 40.0f)),
 	  crate5("collide", "models/island.3ds",Point3f(20.0f,100.0f, 50.0f),
-              Vector3f(15.0f, 15.0f, 15.0f)),
+              Vector3f(30.0f, 30.0f, 30.0f)),
     m_player(Camera(Point3f(0.0f, 0.0f, 80.0f),
              Quaternion(),
              1.0f, 10000.0f),
@@ -26,8 +26,7 @@ namespace Crate {
 	m_shot(false),
 	port(false),
 	disc(false),
-//    gold("collide", "models/gold.3ds", Point3f(200.0f,200.0f,300.0f),
-//              Vector3f(30.0f, 30.0f, 30.0f))
+    //initialize gold pieces
     gold("models/gold.3ds", Point3f(100.0f,100.0f,200.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
     gold2("models/gold.3ds", Point3f(225.0f,-25.0f,250.0f),
@@ -35,6 +34,13 @@ namespace Crate {
     gold3("models/gold.3ds", Point3f(150.0f,-115.0f,350.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
     gold4("models/gold.3ds", Point3f(60.0f,-40.0f,400.0f),
+             Vector3f(2.0f, 2.0f, 2.0f)),
+    //initialize enemies
+    e1(50.0f,"models/creature.3ds", Point3f(100.0f,100.0f,50.0f),
+             Vector3f(2.0f, 2.0f, 2.0f)),
+    e2(40.0f,"models/creature.3ds", Point3f(-100.0f,-100.0f,50.0f),
+             Vector3f(2.0f, 2.0f, 2.0f)),
+    e3(30.0f,"models/creature.3ds", Point3f(100.0f,-100.0f,50.0f),
              Vector3f(2.0f, 2.0f, 2.0f))
   {
       gold_set.insert(&gold);
@@ -46,8 +52,12 @@ namespace Crate {
       crate_set.insert(&crate3);
       crate_set.insert(&crate4);
       crate_set.insert(&crate5);
+      enemy_set.insert(&e1);
+      enemy_set.insert(&e2);
+      enemy_set.insert(&e3);
     set_pausable(true);
     gold_count = 0;
+    bounced = false;
   }
 
   void Crate_State::on_push() {
@@ -148,9 +158,22 @@ namespace Crate {
     /** Get velocity vector split into a number of axes **/
     const Vector3f velocity = (m_controls.forward - m_controls.back) * 80.0f * forward
                             + (m_controls.left - m_controls.right) * 80.0f * left;
-    const Vector3f x_vel = velocity.get_i();
-    const Vector3f y_vel = velocity.get_j();
-    Vector3f z_vel = m_player.get_velocity().get_k();
+    Vector3f x_vel;
+    Vector3f y_vel;
+    Vector3f z_vel;
+    if(!bounced)
+    {
+        x_vel = velocity.get_i();
+        y_vel = velocity.get_j();
+        z_vel = m_player.get_velocity().get_k();
+    }
+    else
+    {
+        x_vel = new_v.get_i();
+        y_vel = new_v.get_j();
+        z_vel = new_v.get_j();
+    }
+   // Vector3f z_vel = m_player.get_velocity().get_k();
 
     /** Bookkeeping for sound effects **/
     if(velocity.magnitude() != 0.0f)
@@ -179,8 +202,6 @@ namespace Crate {
 		}
 	}
 
-	
-
     /** Keep delays under control (if the program hangs for some time, we don't want to lose responsiveness) **/
     if(processing_time > 0.1f)
       processing_time = 0.1f;
@@ -205,6 +226,14 @@ namespace Crate {
 	  if (disc)
 		m_disc->step(time_step);
 
+
+      //enemy chasing player
+      for(std::set<enemy*>::iterator it=enemy_set.begin();it!=enemy_set.end();++it)
+      {
+          (*it)->calc_dir();
+          (*it)->cont_chase();//this checks if the enemy needs to rest
+          (*it)->chase(m_player, time_step);
+      }
       /** Keep player above ground; Bookkeeping for jumping controls **/
       const Point3f &position = m_player.get_camera().position;
       if(position.z < 50.0f) {
@@ -232,12 +261,28 @@ namespace Crate {
 	{
 		m_player.fuel_up();
 	}
+    
+    //bounce the player
 
+    //stop the bouncing after 1 second
+    if(bounce_timer.seconds() > 0.3f)
+    {
+        bounced = false;
+    }
 
-  }
+}
 
-  //render the set
-    void Crate_State::render_set(std::set<game_object*> &input)  
+  //render the enemy set
+  void Crate_State::render_set(std::set<enemy*> &input)  
+    {
+        std::set<enemy*>::iterator it;
+        for(it = input.begin();it!= input.end();++it)
+        {
+            (*it)->render();
+        }
+    }
+
+  void Crate_State::render_set(std::set<game_object*> &input)  
     {
         std::set<game_object*>::iterator it;
         for(it = input.begin();it!= input.end();++it)
@@ -266,10 +311,12 @@ namespace Crate {
 	if (disc){
 		m_disc->render();
 	}
-
+    e1.render();
     //render the st of gold
     render_set(gold_set);
 
+    //
+    render_set(enemy_set);
 	//render the floor
 	Material floor("rock");
 	Vertex3f_Texture p0(Point3f(5000.0f, 5000.0f, -1.0f),Point2f(0.0f,0.0f));
@@ -295,9 +342,13 @@ namespace Crate {
     //render the fuel left
      render_image("fuel_bar",Point2f(25.0f,70.0f),
          Point2f(25+m_player.get_time(),92),false);
+    //render the health
+     render_image("health_bar",Point2f(25.0f,102.0f),
+         Point2f(25+m_player.get_health(),124),false);
   }
 
   void Crate_State::partial_step(const float &time_step, const Vector3f &velocity) {
+
     m_player.set_velocity(velocity);
     const Point3f backup_position = m_player.get_camera().position;
 
@@ -336,7 +387,26 @@ namespace Crate {
                 (*it)->disappear();
                 gold_count++;
           }
-        }
+       }
+    }
+    for(std::set<enemy*>::iterator it = enemy_set.begin(); it!=enemy_set.end();++it)
+    {
+      if((*it)->get_body().intersects(m_player.get_body())) 
+      {
+          if(m_moved)
+          {
+            /** Play a sound if possible **/
+                play_sound("bounce");
+                m_moved = false;
+                (*it)->rest();
+                //get the direction that player should be bounced
+                new_v= Vector3f(6*(m_player.get_camera().position.x - (*it)->m_corner.x), 6*(m_player.get_camera().position.y - (*it)->m_corner.y),10.0f);
+                bounced =true;
+                bounce_timer.set(0);
+                bounce_timer.start();
+                m_player.attacked();
+          }
+       }
     }
   }
 

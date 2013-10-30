@@ -47,6 +47,9 @@ namespace Crate {
 
     void step(const float &time_step);
 
+    //being attacked
+    void attacked();
+    float get_health();
 
   private:
     void create_body();
@@ -69,9 +72,11 @@ namespace Crate {
 	Zeni::Chronometer<Zeni::Time> rest_timer;
     Zeni::Chronometer<Zeni::Time> fly_timer;
     Zeni::Chronometer<Zeni::Time> no_move;
+
     float fuel;
     float rest_time;
     float in_air_time;
+    float health;
   };
 
 }

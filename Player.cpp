@@ -14,7 +14,8 @@ namespace Crate {
      m_end_point_b(end_point_b_),
      m_radius(radius_),
      m_is_on_ground(false),
-     fuel(200.0f)
+     fuel(200.0f),
+     health(200.0f)
   {
     m_camera.fov_rad = Zeni::Global::pi / 3.0f;
 
@@ -79,6 +80,17 @@ namespace Crate {
         }
     }
 
+    //lost health when being atacked
+    void Player::attacked()
+    {
+        //take away some health
+        if(health >=5.0f)health -= 5.0f;
+
+        //get bumped
+        m_camera.position.z = 55.0f;
+        //m_velocity.k = 260.0f;
+    }
+
 	void Player::port(const Zeni::Point3f &location_)
 	{
 		m_camera.position = location_ + Zeni::Vector3f(0.0f, 0.0f, 50.0f);
@@ -122,6 +134,11 @@ namespace Crate {
     float Player::get_time()
     {
         return fuel;
+    }
+
+    float Player::get_health()
+    {
+        return health;
     }
 
     bool Player::resting()

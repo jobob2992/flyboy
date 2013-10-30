@@ -22,13 +22,10 @@ class game_object {
     const Zeni::Collision::Parallelepiped & get_body() const {return m_body;}
 
     void disappear();
-
-private:
+    
     void create_body();
-
     //get the 3D model
     Zeni::Model *m_model;
-
     //location, size, and rotation
     Zeni::Point3f m_corner;
     Zeni::Vector3f m_scale;
