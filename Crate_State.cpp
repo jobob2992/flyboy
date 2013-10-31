@@ -60,11 +60,11 @@ Vector3f(2.0f, 2.0f, 2.0f)),
     gold16("models/gold.3ds", Point3f(15.0f,90.0f, 65.0f),
 Vector3f(2.0f, 2.0f, 2.0f)),
 //gold on huge rock
-    gold5("models/gold.3ds", Point3f(150.0f,300.0f,450.0f),
+    gold5("models/gold.3ds", Point3f(150.0f,300.0f,500.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-    gold6("models/gold.3ds", Point3f(140.0f,300.0f,460.0f),
+    gold6("models/gold.3ds", Point3f(140.0f,300.0f,510.0f),
 Vector3f(2.0f, 2.0f, 2.0f)),
-    gold7("models/gold.3ds", Point3f(130.0f,300.0f,450.0f),
+    gold7("models/gold.3ds", Point3f(130.0f,300.0f,500.0f),
 Vector3f(2.0f, 2.0f, 2.0f)),
     //initialize enemies
     e1(90.0f,"models/creature.3ds", Point3f(100.0f,0.0f,50.0f),
@@ -549,8 +549,7 @@ Vector3f(2.0f, 2.0f, 2.0f)),
 			ft.render_text("Yes", Point2f(1920.0f, 0.0f), get_Colors()["red"], ZENI_RIGHT);
 		}
 	}
-    //render lvl instructions//////////
-    if(lvl = 1)ft.render_text("hold SPACE to use your jetpack\nand pick up the gold on the rock\nin front of you", Point2f(0.0f, 300.0f), get_Colors()["red"], ZENI_LEFT);
+
 
     ////////////////////////////
     //render the fuel left
