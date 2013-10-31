@@ -20,7 +20,8 @@ void enemy::chase(Crate::Player &player, float & step)
     //only go chase if the enemy is not resting
     if(go_chase)
     {
-        m_corner += speed*step*direction/100.0f;
+		if (!stopped)
+			m_corner += speed*step*direction/100.0f;
         create_body();
     }
 }
@@ -49,4 +50,17 @@ void enemy::calc_dir()
         aim.set(0);
         aim.start();
     }
+}
+
+void enemy::create_body() 
+  {
+    m_body = Parallelepiped(m_corner,
+                            m_rotation * 6.0f * m_scale.get_i(),
+                            m_rotation * 3.0f * m_scale.get_j(),
+                            m_rotation * 3.0f * m_scale.get_k());
+  }
+
+void enemy::stop(const bool &stopit)
+{
+	stopped = stopit;
 }

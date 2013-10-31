@@ -23,6 +23,11 @@ namespace port_disc{
 		m_position = in.first;
 		m_velocity = in.second;
 		stopped = false;
+		if(stuck)
+		{
+			stuck->stop(false);
+			stuck = NULL;
+		}
 		create_body();
 	}
 	void port_disc::step(const float &time_step)
@@ -39,6 +44,18 @@ namespace port_disc{
 	{
 		m_position = loc;
 		create_body();
+	}
+	void port_disc::enemy_stuck(enemy* it)
+	{
+		stuck = it;
+		stop();
+	}
+	bool port_disc::is_stuck()
+	{
+		if (stuck)
+			return true;
+		else
+			return false;
 	}
 	void port_disc::render()
 	{

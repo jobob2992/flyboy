@@ -196,6 +196,10 @@ namespace Crate {
 	if (port){
 		port = false;
 		if (disc){
+			if (m_disc->is_stuck())
+			{
+				enemy_set.erase(m_disc->stuck_to());
+			}
 			m_player.port(m_disc->location());
 			delete m_disc;
 			m_disc = NULL;
@@ -213,6 +217,13 @@ namespace Crate {
 								50.0f + (iter->get_body().get_end_point_a().z)));
 						}
 					}
+				}
+			}
+			for (auto iter: enemy_set)
+			{
+				if(iter->get_body().intersects(m_player.get_body()))
+				{
+					enemy_set.erase(iter);
 				}
 			}
 		}
@@ -313,10 +324,10 @@ namespace Crate {
   void Crate_State::render_set(std::set<enemy*> &input)  
     {
         std::set<enemy*>::iterator it;
-        for(it = input.begin();it!= input.end();++it)
-        {
-            (*it)->render();
-        }
+		for(it = input.begin();it!= input.end();++it)
+		{
+			(*it)->render();
+		}
     }
 
   void Crate_State::render_set(std::set<game_object*> &input)  
@@ -348,7 +359,6 @@ namespace Crate {
 	if (disc){
 		m_disc->render();
 	}
-    e1.render();
     //render the st of gold
     render_set(gold_set);
 
@@ -467,7 +477,7 @@ namespace Crate {
     }
     for(std::set<enemy*>::iterator it = enemy_set.begin(); it!=enemy_set.end();++it)
     {
-      if((*it)->get_body().intersects(m_player.get_body())) 
+      if((*it)->get_body().intersects(m_player.get_body()))
       {
           if(m_moved)
           {
@@ -483,6 +493,23 @@ namespace Crate {
                 m_player.attacked();
           }
        }
+	  if(disc)
+	  {
+		  if(m_disc->get_body().intersects((*it)->get_body()))
+		  {
+			  if(m_disc->location().z < ((*it)->get_body().get_center().z + 12.0f))
+			  {
+					if(m_disc->location().z > ((*it)->get_body().get_center().z - 1.5f))
+					{
+						if(!m_disc->is_stuck())
+						{
+							m_disc->enemy_stuck(*it);
+							(*it)->stop(true);
+						}
+					}
+			  }
+		  }
+	  }
     }
   }
 
