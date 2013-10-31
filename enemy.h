@@ -11,7 +11,7 @@ class enemy : public game_object {
         const Zeni::Point3f &corner,
           const Zeni::Vector3f &scale,
           const Zeni::Quaternion &rotation = Zeni::Quaternion::Axis_Angle(Zeni::Vector3f(0.0f, 0.0f, 1.0f), 0.0f)): game_object(modl,corner,scale,rotation),
-          go_chase(true),speed(chase_speed), direction(Zeni::Point3f(0,0,0)){}
+          stopped(false), go_chase(true), speed(chase_speed), direction(Zeni::Point3f(0,0,0)){}
 
       void chase(Crate::Player &player, float &step);
 
@@ -20,6 +20,8 @@ class enemy : public game_object {
       //go chase after a certain time
       void cont_chase();
       void calc_dir();
+	  void stop(const bool &stopit);
+	  void create_body();
 private:
     Zeni::Point3f user_pos;
     Zeni::Chronometer<Zeni::Time> chill;
@@ -27,5 +29,6 @@ private:
     Zeni::Point3f direction;
     bool go_chase;
     float speed;
+	bool stopped;
   };
 #endif

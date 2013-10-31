@@ -50,3 +50,16 @@ void enemy::calc_dir()
         aim.start();
     }
 }
+
+void enemy::create_body() 
+  {
+    m_body = Parallelepiped(m_corner,
+                            m_rotation * 6.0f * m_scale.get_i(),
+                            m_rotation * 3.0f * m_scale.get_j(),
+                            m_rotation * 3.0f * m_scale.get_k());
+  }
+
+void enemy::stop(const bool &stopit)
+{
+	stopped = stopit;
+}

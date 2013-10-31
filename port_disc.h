@@ -6,6 +6,7 @@
 #include <Zeni/Quaternion.h>
 #include <Zeni/Sound.h>
 #include <Zeni/Vector3f.h>
+#include "enemy.h"
 #include "game_object.h"
 
 namespace port_disc{
@@ -22,6 +23,9 @@ namespace port_disc{
 		void stop();
 		bool is_stopped(){return stopped;};
 		void set_location(Zeni::Point3f);
+		void enemy_stuck(enemy* it);
+		enemy* stuck_to(){return stuck;};
+		bool is_stuck();
 
 	private:
 		void create_body();
@@ -34,6 +38,7 @@ namespace port_disc{
 		Zeni::Vector3f m_velocity;
 		Zeni::Quaternion m_rotation;
 		bool stopped;
+		enemy* stuck;
 	};
 }
 #endif

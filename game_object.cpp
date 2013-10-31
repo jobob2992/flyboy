@@ -41,9 +41,9 @@ game_object::game_object(const Zeni::String &modl,
   void game_object::create_body() 
   {
     m_body = Parallelepiped(m_corner,
-                            m_rotation * m_scale.get_i(),
-                            m_rotation * m_scale.get_j(),
-                            m_rotation * m_scale.get_k());
+                            m_rotation * 3.0f * m_scale.get_i(),
+                            m_rotation * 1.78f * m_scale.get_j(),
+                            m_rotation * 0.833 * m_scale.get_k());
   }
 
 

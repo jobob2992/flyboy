@@ -67,18 +67,18 @@ Vector3f(2.0f, 2.0f, 2.0f)),
     gold7("models/gold.3ds", Point3f(130.0f,300.0f,450.0f),
 Vector3f(2.0f, 2.0f, 2.0f)),
     //initialize enemies
-    e1(0.0f,"models/creature.3ds", Point3f(100.0f,0.0f,50.0f),
+    e1(90.0f,"models/creature.3ds", Point3f(100.0f,0.0f,50.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-    e2(0.0f,"models/creature.3ds", Point3f(-100.0f,-100.0f,50.0f),
+    e2(70.0f,"models/creature.3ds", Point3f(-100.0f,-100.0f,50.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-    e3(0.0f,"models/creature.3ds", Point3f(100.0f,-100.0f,50.0f),
+    e3(60.0f,"models/creature.3ds", Point3f(100.0f,-100.0f,50.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-    e4(0.0f,"models/creature.3ds", Point3f(-100.0f,0.0f,150.0f),
+    e4(40.0f,"models/creature.3ds", Point3f(-100.0f,0.0f,150.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-    e5(0.0f,"models/creature.3ds", Point3f(150.0f,-200.0f,100.0f),
+    e5(30.0f,"models/creature.3ds", Point3f(150.0f,-200.0f,100.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-             lvl(5),
-             win(true)
+             lvl(1),
+             win(false)
   {
       gold_set.insert(&gold);
       gold_set.insert(&gold2);
@@ -248,6 +248,10 @@ Vector3f(2.0f, 2.0f, 2.0f)),
 	if (port){
 		port = false;
 		if (disc){
+			if (m_disc->is_stuck())
+			{
+				enemy_set.erase(m_disc->stuck_to());
+			}
 			m_player.port(m_disc->location());
 			delete m_disc;
 			m_disc = NULL;
@@ -265,6 +269,13 @@ Vector3f(2.0f, 2.0f, 2.0f)),
 								50.0f + (iter->get_body().get_end_point_a().z)));
 						}
 					}
+				}
+			}
+			for (auto iter: enemy_set)
+			{
+				if(iter->get_body().intersects(m_player.get_body()))
+				{
+					enemy_set.erase(iter);
 				}
 			}
 		}
@@ -467,10 +478,10 @@ Vector3f(2.0f, 2.0f, 2.0f)),
   void Crate_State::render_set(std::set<enemy*> &input)  
     {
         std::set<enemy*>::iterator it;
-        for(it = input.begin();it!= input.end();++it)
-        {
-            (*it)->render();
-        }
+		for(it = input.begin();it!= input.end();++it)
+		{
+			(*it)->render();
+		}
     }
 
   void Crate_State::render_set(std::set<game_object*> &input)  
@@ -626,7 +637,7 @@ Vector3f(2.0f, 2.0f, 2.0f)),
     }
     for(std::set<enemy*>::iterator it = enemy_set.begin(); it!=enemy_set.end();++it)
     {
-      if((*it)->get_body().intersects(m_player.get_body())) 
+      if((*it)->get_body().intersects(m_player.get_body()))
       {
           if(m_moved)
           {
@@ -642,6 +653,23 @@ Vector3f(2.0f, 2.0f, 2.0f)),
                 m_player.attacked();
           }
        }
+	  if(disc)
+	  {
+		  if(m_disc->get_body().intersects((*it)->get_body()))
+		  {
+			  if(m_disc->location().z < ((*it)->get_body().get_center().z + 12.0f))
+			  {
+					if(m_disc->location().z > ((*it)->get_body().get_center().z - 1.5f))
+					{
+						if(!m_disc->is_stuck())
+						{
+							m_disc->enemy_stuck(*it);
+							(*it)->stop(true);
+						}
+					}
+			  }
+		  }
+	  }
     }
   }
 
