@@ -8,16 +8,18 @@ using namespace Zeni::Collision;
 namespace Crate {
 
   Crate_State::Crate_State()
-    : m_crate("collide", "models/island.3ds",Point3f(70, -10.0f, 350.0f),
-              Vector3f(30.0f, 30.0f, 30.0f)),
-		crate2("collide", "models/island.3ds",Point3f(50.0f, -80.0f, 250.0f),
-              Vector3f(30.0f, 30.0f, 30.0f)),
-	  crate3("collide", "models/island.3ds",Point3f(250.0f, -150.0f, 200.0f),
-              Vector3f(30.0f, 30.0f, 30.0f)),
-	  crate4("collide", "models/island.3ds",Point3f(200.0f, 100.0f, 150.0f),
+    : m_crate("collide", "models/island.3ds",Point3f(70, -10.0f, 100.0f),
+              Vector3f(40.0f, 40.0f, 40.0f)),
+		crate2("collide", "models/island.3ds",Point3f(50.0f, -80.0f, 100.0f),
+              Vector3f(40.0f, 40.0f, 40.0f)),
+	  crate3("collide", "models/island.3ds",Point3f(250.0f, -150.0f, 100.0f),
+              Vector3f(40.0f, 40.0f, 40.0f)),
+	  crate4("collide", "models/island.3ds",Point3f(200.0f, 100.0f, 100.0f),
               Vector3f(40.0f, 40.0f, 40.0f)),
 	  crate5("collide", "models/island.3ds",Point3f(20.0f,100.0f, 50.0f),
-              Vector3f(30.0f, 30.0f, 30.0f)),
+              Vector3f(40.0f, 40.0f, 40.0f)),
+	  crate6("collide", "models/island.3ds",Point3f(70.0f,150.0f, 250.0f),
+              Vector3f(140.0f, 140.0f, 140.0f)),
     m_player(Camera(Point3f(0.0f, 0.0f, 80.0f),
              Quaternion(),
              1.0f, 10000.0f),
@@ -27,13 +29,15 @@ namespace Crate {
 	port(false),
 	disc(false),
     //initialize gold pieces
-    gold("models/gold.3ds", Point3f(100.0f,100.0f,200.0f),
+    gold("models/gold.3ds", Point3f(300.0f,300.0f,60.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-    gold2("models/gold.3ds", Point3f(225.0f,-25.0f,250.0f),
+    gold2("models/gold.3ds", Point3f(225.0f,-25.0f,60.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-    gold3("models/gold.3ds", Point3f(150.0f,-115.0f,350.0f),
+    gold3("models/gold.3ds", Point3f(150.0f,-115.0f,60.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-    gold4("models/gold.3ds", Point3f(60.0f,-40.0f,400.0f),
+    gold4("models/gold.3ds", Point3f(60.0f,-40.0f,60.0f),
+             Vector3f(2.0f, 2.0f, 2.0f)),
+    gold5("models/gold.3ds", Point3f(70.0f,150.0f,50.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
     //initialize enemies
     e1(50.0f,"models/creature.3ds", Point3f(100.0f,100.0f,50.0f),
@@ -41,17 +45,20 @@ namespace Crate {
     e2(40.0f,"models/creature.3ds", Point3f(-100.0f,-100.0f,50.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
     e3(30.0f,"models/creature.3ds", Point3f(100.0f,-100.0f,50.0f),
-             Vector3f(2.0f, 2.0f, 2.0f))
+             Vector3f(2.0f, 2.0f, 2.0f)),
+             lvl(1)
   {
       gold_set.insert(&gold);
       gold_set.insert(&gold2);
       gold_set.insert(&gold3);
       gold_set.insert(&gold4);
+      gold_set.insert(&gold5);
       crate_set.insert(&m_crate);
       crate_set.insert(&crate2);
       crate_set.insert(&crate3);
       crate_set.insert(&crate4);
       crate_set.insert(&crate5);
+      crate_set.insert(&crate6);
       enemy_set.insert(&e1);
       enemy_set.insert(&e2);
       enemy_set.insert(&e3);
@@ -229,13 +236,16 @@ namespace Crate {
 	  if (disc)
 		m_disc->step(time_step);
 
-
+      
       //enemy chasing player
-      for(std::set<enemy*>::iterator it=enemy_set.begin();it!=enemy_set.end();++it)
+      if(lvl == 5)
       {
-          (*it)->calc_dir();
-          (*it)->cont_chase();//this checks if the enemy needs to rest
-          (*it)->chase(m_player, time_step);
+          for(std::set<enemy*>::iterator it=enemy_set.begin();it!=enemy_set.end();++it)
+          {
+              (*it)->calc_dir();
+              (*it)->cont_chase();//this checks if the enemy needs to rest
+              (*it)->chase(m_player, time_step);
+          }
       }
       /** Keep player above ground; Bookkeeping for jumping controls **/
       const Point3f &position = m_player.get_camera().position;
@@ -292,6 +302,64 @@ namespace Crate {
         bounced = false;
     }
 
+///////////////level difference starts from here//////////////////////////////////
+    if(lvl < 2) //jetpack tutorial
+    {
+        crate2.disappear();
+        crate3.disappear();
+        crate4.disappear();
+        crate5.disappear();
+        crate6.disappear();
+        for(std::set<game_object*>::iterator it= gold_set.begin(); it!=gold_set.end(); ++it)
+        {
+            if((*it) != &gold) (*it)->disappear();
+        }
+        for(std::set<enemy*>::iterator it= enemy_set.begin(); it!=enemy_set.end(); ++it)
+        {
+            (*it)->disappear();
+        }
+        if(gold.m_corner.z < -100.0f)
+        {
+            lvl++;
+        }
+    }
+    if(lvl == 2) //use teleport gun
+    {
+        //e1.appear();
+        crate6.appear();
+        gold5.appear();
+        if(gold5.m_corner.z < -100.0f)
+        {
+            lvl++;
+        }
+    }
+    if (lvl == 3)
+    {
+        e1.appear();
+        if(m_player.get_health() < 200) //just make it to next level for now
+        {
+            lvl++;
+            lvl_buf.set(0);
+            lvl_buf.start();
+        }
+    }
+    if (lvl == 4)
+    {
+
+        for(std::set<Crate*>::iterator it= crate_set.begin(); it!=crate_set.end(); ++it)
+        {
+            (*it)->appear();
+        }
+        for(std::set<enemy*>::iterator it= enemy_set.begin(); it!=enemy_set.end(); ++it)
+        {
+            (*it)->appear();
+        }
+        if(lvl_buf.seconds() > 5)
+        {
+            lvl++;
+        }
+    }
+
 }
 
   //render the enemy set
@@ -333,11 +401,8 @@ namespace Crate {
 	if (disc){
 		m_disc->render();
 	}
-    e1.render();
     //render the st of gold
     render_set(gold_set);
-
-    //
     render_set(enemy_set);
 	//render the floor
 	Material floor("rock");
@@ -358,7 +423,7 @@ namespace Crate {
 	float spacewid = ft.get_text_width(",");
 	ft.render_text(itoa(m_player.get_velocity().x), Point2f(0.0f, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
 	ft.render_text(",", Point2f(0.0f + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
-    ft.render_text(itoa(m_player.get_velocity().y), Point2f(0.0f + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+    ft.render_text(itoa(lvl_buf.seconds()), Point2f(0.0f + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
 	ft.render_text(",", Point2f(0.0f + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
 	ft.render_text(itoa(m_player.get_velocity().z), Point2f(0.0f + spacewid + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
 	if (disc)
@@ -372,6 +437,9 @@ namespace Crate {
      render_image("fuel_bar",Point2f(25.0f,70.0f),
          Point2f(25+m_player.get_time(),92),false);
     //render the health
+     render_image("health_bar",Point2f(25.0f,102.0f),
+         Point2f(25+m_player.get_health(),124),false);
+
      render_image("health_bar",Point2f(25.0f,102.0f),
          Point2f(25+m_player.get_health(),124),false);
   }

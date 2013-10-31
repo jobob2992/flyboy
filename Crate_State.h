@@ -53,7 +53,7 @@ namespace Crate {
 
     Zeni::Time_HQ time_passed;
 
-    Crate m_crate, crate2, crate3, crate4, crate5;
+    Crate m_crate, crate2, crate3, crate4, crate5,crate6;
     Player m_player;
 	port_disc::port_disc* m_disc;
 	bool disc;
@@ -62,13 +62,15 @@ namespace Crate {
 	bool m_shot;
 	bool port;
     bool bounced;
+    int lvl;
     //game_object gold;
-    game_object gold, gold2,gold3, gold4;
+    game_object gold, gold2,gold3, gold4,gold5;
     enemy e1,e2,e3;
     std::set<game_object*> gold_set;
     std::set<Crate*> crate_set;
     std::set<enemy*> enemy_set;
     Zeni::Chronometer<Zeni::Time> bounce_timer;
+    Zeni::Chronometer<Zeni::Time> lvl_buf;
     //keep track of gold count
     int gold_count;
     Zeni::Vector3f new_v;

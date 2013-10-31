@@ -17,12 +17,13 @@ namespace Crate {
     m_top_center(top_center),
     m_scale(scale_),
     m_rotation(rotation_),
-    model_name(modl)
+    model_name(modl),
+    origin(top_center)
   {
     //if(!m_instance_count)
       m_model = new Model(modl);
    // ++m_instance_count;
-
+      
     create_body();
   }
 
@@ -79,7 +80,9 @@ namespace Crate {
 
   void Crate::disappear()
   {
-      m_top_center.z = -300.0f;
+      m_top_center.z = -1000.0f;
+      create_body();
+      make_appear = false;
   }
 
   void Crate::create_body() {
@@ -90,6 +93,15 @@ namespace Crate {
 	  m_source->set_position(m_top_center - Zeni::Vector3f(0.0f, 0.0f, -0.5275 * m_scale.z));
   }
 
+  void Crate::appear()
+  {
+      if(!make_appear)
+      {
+          make_appear = true;
+          m_top_center = origin;
+          create_body();
+      }
+  }
   Model * Crate::m_model = 0;
   unsigned long Crate::m_instance_count = 0lu;
 
