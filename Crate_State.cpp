@@ -442,6 +442,7 @@ namespace Crate {
 	vr.render(quad);
 
 	vr.set_2d();
+    get_Video().set_2d(std::make_pair(Point2f(0.0f, 0.0f), Point2f(1024.0f, 768.0f)), true);
 	Zeni::Font &ft = get_Fonts()["title"];
 	const Point3f &velocity = m_player.get_velocity();
 	float xwid = ft.get_text_width(itoa((m_player.get_camera().position.z - 50.0f)/25.0f));
@@ -449,17 +450,8 @@ namespace Crate {
 	//float zwid = ft.get_text_width(itoa(m_player.get_velocity().z));
 	float spacewid = ft.get_text_width(",");
 	ft.render_text(itoa((m_player.get_camera().position.z - 50.0f)/25.0f), Point2f(0.0f, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
-	//ft.render_text(",", Point2f(0.0f + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
-    //ft.render_text(itoa(lvl_buf.seconds()), Point2f(0.0f + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
-	//ft.render_text(",", Point2f(0.0f + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
-	//ft.render_text(itoa(m_player.get_velocity().z), Point2f(0.0f + spacewid + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
-	/*if (disc)
-	{
-		if (m_disc->is_stopped())
-		{
-			ft.render_text("Yes", Point2f(1920.0f, 0.0f), get_Colors()["red"], ZENI_RIGHT);
-		}
-	}*/
+    //render lvl instructions//////////
+    if(lvl = 1)ft.render_text("hold SPACE to use your jetpack\nand pick up the gold on the rock\nin front of you", Point2f(0.0f, 300.0f), get_Colors()["red"], ZENI_LEFT);
     //render the fuel left
      render_image("fuel_bar",Point2f(25.0f,70.0f),
          Point2f(25+m_player.get_time(),92),false);
