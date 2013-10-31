@@ -84,7 +84,7 @@ namespace Crate {
     void Player::attacked()
     {
         //take away some health
-        if(health >=5.0f)health -= 5.0f;
+        if(health >=5.0f)health -= 20.0f;
 
         //get bumped
         m_camera.position.z = 55.0f;

@@ -21,6 +21,7 @@ namespace port_disc{
 		void render();
 		void stop();
 		bool is_stopped(){return stopped;};
+		void set_location(Zeni::Point3f);
 
 	private:
 		void create_body();

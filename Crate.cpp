@@ -59,12 +59,6 @@ namespace Crate {
   void Crate::render() {
     const std::pair<Vector3f, float> rotation = m_rotation.get_rotation();
 
-	m_model->set_translate(m_body.get_end_point_a());
-    m_model->set_scale(m_scale);
-    m_model->set_rotate(rotation.second, rotation.first);
-
-    m_model->render();
-
 	m_model->set_translate(m_top_center);
     m_model->set_scale(m_scale);
     m_model->set_rotate(rotation.second, rotation.first);
@@ -84,8 +78,8 @@ namespace Crate {
 
   void Crate::create_body() {
 	  m_body = Infinite_Cylinder(m_top_center,
-								m_top_center - Zeni::Vector3f(0.0f, 0.0f, -1.055 * m_scale.z),
-								0.977f * m_scale.z);
+								m_top_center - Zeni::Vector3f(0.0f, 0.0f, 1.055 * m_scale.z),
+								0.977f * m_scale.x);
 
 	  m_source->set_position(m_top_center - Zeni::Vector3f(0.0f, 0.0f, -0.5275 * m_scale.z));
   }
