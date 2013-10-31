@@ -63,6 +63,7 @@ namespace Crate {
 	bool port;
     bool bounced;
     int lvl;
+	int enemy_set_size;
     //game_object gold;
     game_object gold, gold2,gold3, gold4,gold5,gold6,gold7,gold8,gold9,gold10,gold11,gold12,gold13,gold14,gold15,gold16;
     enemy e1,e2,e3,e4,e5;
