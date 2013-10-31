@@ -22,7 +22,8 @@ class game_object {
     const Zeni::Collision::Parallelepiped & get_body() const {return m_body;}
 
     void disappear();
-    
+    void appear();
+
     void create_body();
     //get the 3D model
     Zeni::Model *m_model;
@@ -32,5 +33,7 @@ class game_object {
     Zeni::Quaternion m_rotation;
     //for collision
     Zeni::Collision::Parallelepiped m_body;
+    Zeni::Point3f original_pos;
+    bool make_appear;
   };
 #endif

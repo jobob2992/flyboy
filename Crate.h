@@ -27,7 +27,7 @@ namespace Crate {
 
     //make a crate disappear
     void disappear();
-
+    void appear();
 	const Zeni::Collision::Infinite_Cylinder & get_body() const {return m_body;}
     Zeni::String model_name;
   private:
@@ -46,7 +46,8 @@ namespace Crate {
 
     // Level 3
 	Zeni::Collision::Infinite_Cylinder m_body; // not motion so much as collision
-
+    bool make_appear;
+    Zeni::Point3f origin;
     // Level 4
     // A stationary Crate has no controls
   };

@@ -15,7 +15,9 @@ game_object::game_object(const Zeni::String &modl,
       m_corner = corner;
       m_scale = scale;
       m_rotation = rotation;
+      original_pos = m_corner;
       create_body();
+      make_appear = false;
   }
 
   game_object & game_object::operator=(const game_object &rhs) {
@@ -49,4 +51,14 @@ game_object::game_object(const Zeni::String &modl,
   {
       m_corner.z = -1000.0f;
       create_body();
+  }
+
+  void game_object::appear()
+  {
+      if(!make_appear)
+      {
+          make_appear = true;
+          m_corner = original_pos;
+          create_body();
+      }
   }
