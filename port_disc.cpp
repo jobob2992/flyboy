@@ -35,6 +35,11 @@ namespace port_disc{
 	{
 		m_velocity += vec;
 	}
+	void port_disc::set_location(Zeni::Point3f loc)
+	{
+		m_position = loc;
+		create_body();
+	}
 	void port_disc::render()
 	{
 		const std::pair<Zeni::Vector3f, float> rotation = m_rotation.get_rotation();

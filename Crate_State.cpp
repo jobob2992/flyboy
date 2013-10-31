@@ -207,6 +207,21 @@ namespace Crate {
 			delete m_disc;
 			m_disc = NULL;
 			disc = false;
+			for (auto iter: crate_set)
+			{
+				if(iter->get_body().intersects(m_player.get_body())) 
+				{
+					if(m_player.get_camera().position.z < 50.0f + (iter->get_body().get_end_point_a().z))
+					{
+						if(m_player.get_camera().position.z > (iter->get_body().get_end_point_b().z))
+						{
+							m_player.set_position(Zeni::Point3f(m_player.get_camera().position.x,
+								m_player.get_camera().position.y,
+								50.0f + (iter->get_body().get_end_point_a().z)));
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -417,11 +432,14 @@ namespace Crate {
 	vr.set_2d();
 	Zeni::Font &ft = get_Fonts()["title"];
 	const Point3f &velocity = m_player.get_velocity();
-	float xwid = ft.get_text_width(itoa(m_player.get_velocity().x));
-	float ywid = ft.get_text_width(itoa(m_player.get_velocity().y));
+	float xwid = 0.0f;
+	if (disc)
+		xwid = ft.get_text_width(itoa(m_disc->location().z));
+	float ywid = ft.get_text_width(itoa(m_player.get_camera().position.z));
 	float zwid = ft.get_text_width(itoa(m_player.get_velocity().z));
 	float spacewid = ft.get_text_width(",");
-	ft.render_text(itoa(m_player.get_velocity().x), Point2f(0.0f, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
+	if (disc)
+		ft.render_text(itoa(m_disc->location().z), Point2f(0.0f, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
 	ft.render_text(",", Point2f(0.0f + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
     ft.render_text(itoa(lvl_buf.seconds()), Point2f(0.0f + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
 	ft.render_text(",", Point2f(0.0f + ywid + spacewid + xwid, 0.0f), get_Colors()["yellow"], ZENI_LEFT);
@@ -456,35 +474,48 @@ namespace Crate {
     {
           if((*it)->get_body().intersects(m_player.get_body())) 
           {
-              if(m_moved)
-              {
-                /** Play a sound if possible **/
-                (*it)->collide();
-                m_moved = false;
-                //m_crate.~Crate();
-                //m_crate.disappear();
-              }
-			  /*if (m_player.get_body().get_end_point_b().z - m_player.get_body().get_radius() > (*it)->get_body().get_end_point_b().z)
+			  if(m_player.get_camera().position.z < 50.0f + ((*it)->get_body().get_end_point_a().z))
 			  {
-				  //m_player.set_position(Point3f(m_player.get_camera().position.x, m_player.get_camera().position.y, 50.0f + m_player.get_body().get_radius() + (*it)->get_body().get_end_point_a().z));
-				  m_player.set_on_ground(true);
-				  m_player.set_velocity(Zeni::Vector3f(m_player.get_velocity().x, m_player.get_velocity().y, 0.0f));
+				  if(m_player.get_camera().position.z > ((*it)->get_body().get_end_point_b().z))
+				  {
+					if(m_moved)
+					{
+					    /** Play a sound if possible **/
+					    (*it)->collide();
+					    m_moved = false;
+					    //m_crate.~Crate();
+					    //m_crate.disappear();
+					  }
+					  /*if (m_player.get_body().get_end_point_b().z - m_player.get_body().get_radius() > (*it)->get_body().get_end_point_b().z)
+					  {
+						  //m_player.set_position(Point3f(m_player.get_camera().position.x, m_player.get_camera().position.y, 50.0f + m_player.get_body().get_radius() + (*it)->get_body().get_end_point_a().z));
+						  m_player.set_on_ground(true);
+						  m_player.set_velocity(Zeni::Vector3f(m_player.get_velocity().x, m_player.get_velocity().y, 0.0f));
+					  }
+					  else
+					  {*/
+						  m_player.set_position(backup_position);
+					  //}
+					  /** Bookkeeping for jumping controls **/
+					  if(velocity.k < 0.0f)
+					  m_player.set_on_ground(true);
+				  }
 			  }
-			  else
-			  {*/
-				  m_player.set_position(backup_position);
-			  //}
-              /** Bookkeeping for jumping controls **/
-              if(velocity.k < 0.0f)
-                m_player.set_on_ground(true);
-			  
           }
 		  if (disc)
 		  {
-			  if(m_disc->get_body().intersects((*it)->get_body()))
-			  {
-				  m_disc->stop();
-			  }
+				if(m_disc->get_body().intersects((*it)->get_body()))
+				{
+					if(m_disc->location().z < ((*it)->get_body().get_end_point_a().z))
+					{
+						if(m_disc->location().z > ((*it)->get_body().get_end_point_b().z))
+						{
+							if(m_disc->location().z > ((*it)->get_body().get_end_point_a().z) - 8.0f)
+								m_disc->set_location(Zeni::Point3f(m_disc->location().x, m_disc->location().y, (*it)->get_body().get_end_point_a().z));
+							m_disc->stop();
+						}
+					}
+				}
 		  }
     }
 
