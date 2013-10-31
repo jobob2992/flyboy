@@ -64,13 +64,16 @@ namespace Crate {
     bool bounced;
     int lvl;
     //game_object gold;
-    game_object gold, gold2,gold3, gold4,gold5;
-    enemy e1,e2,e3;
+    game_object gold, gold2,gold3, gold4,gold5,gold6,gold7,gold8,gold9,gold10,gold11,gold12,gold13,gold14,gold15,gold16;
+    enemy e1,e2,e3,e4,e5;
     std::set<game_object*> gold_set;
     std::set<Crate*> crate_set;
     std::set<enemy*> enemy_set;
     Zeni::Chronometer<Zeni::Time> bounce_timer;
     Zeni::Chronometer<Zeni::Time> lvl_buf;
+    Zeni::Chronometer<Zeni::Time> gg_buf;
+    bool win;
+    int count;
     //keep track of gold count
     int gold_count;
     Zeni::Vector3f new_v;

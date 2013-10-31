@@ -8,17 +8,17 @@ using namespace Zeni::Collision;
 namespace Crate {
 
   Crate_State::Crate_State()
-    : m_crate("collide", "models/island.3ds",Point3f(70, -10.0f, 100.0f),
+    : m_crate("collide", "models/island.3ds",Point3f(150, 0.0f, 110.0f),
               Vector3f(40.0f, 40.0f, 40.0f)),
-		crate2("collide", "models/island.3ds",Point3f(50.0f, -80.0f, 100.0f),
+		crate2("collide", "models/island.3ds",Point3f(250.0f, 100.0f, 300.0f),
               Vector3f(40.0f, 40.0f, 40.0f)),
-	  crate3("collide", "models/island.3ds",Point3f(250.0f, -150.0f, 100.0f),
+	  crate3("collide", "models/island.3ds",Point3f(200.0f, -150.0f, 200.0f),
               Vector3f(40.0f, 40.0f, 40.0f)),
-	  crate4("collide", "models/island.3ds",Point3f(200.0f, 100.0f, 100.0f),
+	  crate4("collide", "models/island.3ds",Point3f(0.0f, -100.0f, 250.0f),
               Vector3f(40.0f, 40.0f, 40.0f)),
-	  crate5("collide", "models/island.3ds",Point3f(20.0f,100.0f, 50.0f),
+	  crate5("collide", "models/island.3ds",Point3f(-30.0f,120.0f, 50.0f),
               Vector3f(40.0f, 40.0f, 40.0f)),
-	  crate6("collide", "models/island.3ds",Point3f(70.0f,150.0f, 250.0f),
+	  crate6("collide", "models/island.3ds",Point3f(150.0f,300.0f, 400.0f),
               Vector3f(140.0f, 140.0f, 140.0f)),
     m_player(Camera(Point3f(0.0f, 0.0f, 80.0f),
              Quaternion(),
@@ -28,31 +28,74 @@ namespace Crate {
 	m_shot(false),
 	port(false),
 	disc(false),
+    count(0),
     //initialize gold pieces
-    gold("models/gold.3ds", Point3f(300.0f,300.0f,60.0f),
+    gold("models/gold.3ds", Point3f(150.0f,0.0f,140.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-    gold2("models/gold.3ds", Point3f(225.0f,-25.0f,60.0f),
+    gold2("models/gold.3ds", Point3f(250.0f, 100.0f, 330.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-    gold3("models/gold.3ds", Point3f(150.0f,-115.0f,60.0f),
+    gold3("models/gold.3ds", Point3f(200.0f, -150.0f, 230.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-    gold4("models/gold.3ds", Point3f(60.0f,-40.0f,60.0f),
+    gold4("models/gold.3ds", Point3f(0.0f, -100.0f, 280.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-    gold5("models/gold.3ds", Point3f(70.0f,150.0f,50.0f),
+    //gold between crate2 and crate3
+    gold8("models/gold.3ds", Point3f(210.0f,-100.0f, 250.0f),
+Vector3f(2.0f, 2.0f, 2.0f)),
+    gold9("models/gold.3ds", Point3f(220.0f,-50.0f,270.0f),
+Vector3f(2.0f, 2.0f, 2.0f)),
+    gold10("models/gold.3ds", Point3f(230.0f,0.0f, 290.0f),
+Vector3f(2.0f, 2.0f, 2.0f)),
+    gold11("models/gold.3ds", Point3f(240.0f,50.0f, 310.0f),
+Vector3f(2.0f, 2.0f, 2.0f)),
+    //gold between crate4 and crate3
+    gold12("models/gold.3ds", Point3f(140.0f,-130.0f, 220.0f),
+Vector3f(2.0f, 2.0f, 2.0f)),
+    gold13("models/gold.3ds", Point3f(70.0f,-110.0f,230.0f),
+Vector3f(2.0f, 2.0f, 2.0f)),
+    //gold between m_crate and crate5
+    gold14("models/gold.3ds", Point3f(105.0f,30.0f, 95.0f),
+Vector3f(2.0f, 2.0f, 2.0f)),
+    gold15("models/gold.3ds", Point3f(60.0f,60.0f, 80.0f),
+Vector3f(2.0f, 2.0f, 2.0f)),
+    gold16("models/gold.3ds", Point3f(15.0f,90.0f, 65.0f),
+Vector3f(2.0f, 2.0f, 2.0f)),
+//gold on huge rock
+    gold5("models/gold.3ds", Point3f(150.0f,300.0f,450.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
+    gold6("models/gold.3ds", Point3f(140.0f,300.0f,460.0f),
+Vector3f(2.0f, 2.0f, 2.0f)),
+    gold7("models/gold.3ds", Point3f(130.0f,300.0f,450.0f),
+Vector3f(2.0f, 2.0f, 2.0f)),
     //initialize enemies
-    e1(50.0f,"models/creature.3ds", Point3f(100.0f,100.0f,50.0f),
+    e1(0.0f,"models/creature.3ds", Point3f(100.0f,0.0f,50.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-    e2(40.0f,"models/creature.3ds", Point3f(-100.0f,-100.0f,50.0f),
+    e2(0.0f,"models/creature.3ds", Point3f(-100.0f,-100.0f,50.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-    e3(30.0f,"models/creature.3ds", Point3f(100.0f,-100.0f,50.0f),
+    e3(0.0f,"models/creature.3ds", Point3f(100.0f,-100.0f,50.0f),
              Vector3f(2.0f, 2.0f, 2.0f)),
-             lvl(1)
+    e4(0.0f,"models/creature.3ds", Point3f(-100.0f,0.0f,150.0f),
+             Vector3f(2.0f, 2.0f, 2.0f)),
+    e5(0.0f,"models/creature.3ds", Point3f(150.0f,-200.0f,100.0f),
+             Vector3f(2.0f, 2.0f, 2.0f)),
+             lvl(5),
+             win(true)
   {
       gold_set.insert(&gold);
       gold_set.insert(&gold2);
       gold_set.insert(&gold3);
       gold_set.insert(&gold4);
       gold_set.insert(&gold5);
+      gold_set.insert(&gold6);
+      gold_set.insert(&gold7);
+      gold_set.insert(&gold8);
+      gold_set.insert(&gold9);
+      gold_set.insert(&gold10);
+      gold_set.insert(&gold11);
+      gold_set.insert(&gold12);
+      gold_set.insert(&gold13);
+      gold_set.insert(&gold14);
+      gold_set.insert(&gold15);
+      gold_set.insert(&gold16);
       crate_set.insert(&m_crate);
       crate_set.insert(&crate2);
       crate_set.insert(&crate3);
@@ -62,6 +105,8 @@ namespace Crate {
       enemy_set.insert(&e1);
       enemy_set.insert(&e2);
       enemy_set.insert(&e3);
+      enemy_set.insert(&e4);
+      enemy_set.insert(&e5);
     set_pausable(true);
     gold_count = 0;
     bounced = false;
@@ -317,6 +362,26 @@ namespace Crate {
         bounced = false;
     }
 
+    if(m_player.get_health() <=0.0f)
+    {
+        //game over
+        if(lvl != -2)
+        lvl = -1;
+    }
+    if(lvl == 5)
+    {
+        for(std::set<game_object*>::iterator it= gold_set.begin(); it!=gold_set.end(); ++it)
+        {
+            if((*it)->m_corner.z < -100.0f) count++;
+            if(count == 16) win = true;
+        }
+        count = 0;
+    }
+    if(win)
+    {
+        if(lvl != -2 && lvl != -3)lvl = -1;
+    }
+
 ///////////////level difference starts from here//////////////////////////////////
     if(lvl < 2) //jetpack tutorial
     {
@@ -343,7 +408,9 @@ namespace Crate {
         //e1.appear();
         crate6.appear();
         gold5.appear();
-        if(gold5.m_corner.z < -100.0f)
+        gold6.appear();
+        gold7.appear();
+        if(gold5.m_corner.z < -100.0f && gold6.m_corner.z < -100.0f && gold7.m_corner.z < -100.0f)
         {
             lvl++;
         }
@@ -365,6 +432,10 @@ namespace Crate {
         {
             (*it)->appear();
         }
+        for(std::set<game_object*>::iterator it= gold_set.begin(); it!=gold_set.end(); ++it)
+        {
+            (*it)->appear();
+        }
         for(std::set<enemy*>::iterator it= enemy_set.begin(); it!=enemy_set.end(); ++it)
         {
             (*it)->appear();
@@ -373,6 +444,21 @@ namespace Crate {
         {
             lvl++;
         }
+    }
+    if(lvl == -1) //game over wait state
+    {
+        gg_buf.set(0);
+        gg_buf.start();
+        if(win) lvl = -3;
+        else lvl = -2;
+    }
+    if(lvl == -2) //game over display state
+    {
+        if(gg_buf.seconds() > 3.0f) get_Game().pop_state();
+    }
+    if(lvl == -3) //game win
+    {
+        if(gg_buf.seconds() > 3.0f) get_Game().pop_state();
     }
 
 }
@@ -430,6 +516,7 @@ namespace Crate {
 	vr.render(quad);
 
 	vr.set_2d();
+    get_Video().set_2d(std::make_pair(Point2f(0.0f, 0.0f), Point2f(854.0f, 480.0f)), true);
 	Zeni::Font &ft = get_Fonts()["title"];
 	const Point3f &velocity = m_player.get_velocity();
 	float xwid = 0.0f;
@@ -453,13 +540,17 @@ namespace Crate {
 	}
     //render the fuel left
      render_image("fuel_bar",Point2f(25.0f,70.0f),
-         Point2f(25+m_player.get_time(),92),false);
+         Point2f(25+m_player.get_time(),85),false);
+    render_image("battery",Point2f(2.0f,70.0f),
+    Point2f(18,85),false);
     //render the health
      render_image("health_bar",Point2f(25.0f,102.0f),
-         Point2f(25+m_player.get_health(),124),false);
-
-     render_image("health_bar",Point2f(25.0f,102.0f),
-         Point2f(25+m_player.get_health(),124),false);
+         Point2f(25+m_player.get_health(),117),false);
+     render_image("heart",Point2f(2.0f,102.0f),
+         Point2f(18,117),false);
+     //render the aim
+          render_image("aim",Point2f(411.0f,224.0f),
+         Point2f(443.0f, 256.0f),false);
   }
 
   void Crate_State::partial_step(const float &time_step, const Vector3f &velocity) {

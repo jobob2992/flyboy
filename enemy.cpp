@@ -20,7 +20,7 @@ void enemy::chase(Crate::Player &player, float & step)
     //only go chase if the enemy is not resting
     if(go_chase)
     {
-        m_corner += speed*step*direction/100.0f;
+        m_corner += speed*step*direction/70.0f;
         create_body();
     }
 }
